@@ -1,6 +1,6 @@
 [
   {
-    "directory": "./app/MatchTheScene/",
+    "directory": "./app/MatchTheSentence/",
     "title": "Matching Game",
     "description": "A fun matching game to connect words and definitions!"
   },
