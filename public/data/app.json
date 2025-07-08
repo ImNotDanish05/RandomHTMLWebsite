@@ -3,10 +3,5 @@
     "directory": "./app/MatchTheSentence/",
     "title": "Matching Game",
     "description": "A fun matching game to connect words and definitions!"
-  },
-  {
-    "directory": "./app/NumberPuzzle/",
-    "title": "Number Puzzle",
-    "description": "Arrange the numbers into the correct order."
   }
 ]
