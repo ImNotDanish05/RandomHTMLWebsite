@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matching Game</title>
+  <link rel="icon" href="./public/images/icon.png" type="image/png">
+  <link rel="stylesheet" href="./public/css/style.css">
+</head>
+<body>
+  <div class="header-controls">
+    <div style="display: flex; align-items: center;">
+      <img src="./public/images/icon.png" alt="Game Logo" class="logo">
+      <h1>Matching Game</h1>
+    </div>
+    <div class="theme-switcher">
+      <span>Mode Gelap</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="themeToggle">
+        <span class="slider round"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="game-container">
+    <div class="list" id="words"></div>
+    <div class="list" id="definitions"></div>
+  </div>
+
+  <div id="message"></div>
+
+  <div id="game-over-screen">
+    <h2>Selamat! Semua Terpecahkan!</h2>
+    <button id="next-button">Main Lagi!</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leader-line/1.0.7/leader-line.min.js"></script>
+  <script>
+    const JSON_PATH = './public/json/questions.json';
+
+    let selectedElement = null;
+    let currentLines = []; // Untuk menyimpan objek LeaderLine agar bisa dihapus
+    let matchedPairs = 0;
+    let totalPairs = 0;
+    let gameActive = false; // Flag untuk status game
+
+    const wordsDiv = document.getElementById('words');
+    const defsDiv = document.getElementById('definitions');
+    const messageDiv = document.getElementById('message');
+    const themeToggle = document.getElementById('themeToggle');
+    const gameOverScreen = document.getElementById('game-over-screen');
+    const nextButton = document.getElementById('next-button');
+
+    // --- Fungsi Tema Gelap/Terang ---
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    }
+
+    // Load tema dari localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.classList.add('dark-mode');
+      themeToggle.checked = true;
+    } else {
+      themeToggle.checked = false;
+    }
+
+    themeToggle.addEventListener('change', toggleTheme);
+
+    // --- Fungsi Game ---
+    function showMessage(msg, type = 'warning') {
+      messageDiv.textContent = msg;
+      messageDiv.style.display = 'block';
+      if (type === 'success') {
+        messageDiv.style.backgroundColor = 'var(--message-bg-success)';
+        messageDiv.style.color = 'var(--message-text-success)';
+      } else { // default warning
+        messageDiv.style.backgroundColor = 'var(--message-bg-warning)';
+        messageDiv.style.color = 'var(--message-text-warning)';
+      }
+
+      // Reset animasi untuk memicu ulang
+      messageDiv.style.animation = 'none';
+      void messageDiv.offsetWidth; // Trigger reflow
+      messageDiv.style.animation = 'fadeInOut 3s forwards';
+    }
+
+    function clearLines() {
+      currentLines.forEach(line => line.remove());
+      currentLines = [];
+    }
+
+    async function loadData() {
+      gameActive = false;
+      gameOverScreen.style.display = 'none'; // Sembunyikan layar game over
+      clearLines(); // Hapus garis-garis sebelumnya
+      selectedElement = null;
+      matchedPairs = 0;
+      totalPairs = 0;
+
+      wordsDiv.innerHTML = '<p>Memuat kata-kata...</p>';
+      defsDiv.innerHTML = '<p>Memuat definisi...</p>';
+
+      try {
+        const res = await fetch(JSON_PATH);
+        if (!res.ok) {
+          throw new Error(`Gagal memuat data: ${res.status} ${res.statusText}. Pastikan jalur file benar: ${JSON_PATH}`);
+        }
+        let data = await res.json();
+
+        if (!Array.isArray(data) || data.length === 0) {
+          throw new Error('Data JSON kosong atau bukan array yang valid.');
+        }
+
+        // Ambil 10 data random, atau semua jika kurang dari 10
+        const displayData = data.sort(() => Math.random() - 0.5).slice(0, 10);
+        totalPairs = displayData.length;
+
+        // Kosongkan div sebelum menambahkan item baru
+        wordsDiv.innerHTML = '';
+        defsDiv.innerHTML = '';
+
+        // Untuk memastikan definisi dan kata-kata teracak secara terpisah
+        const shuffledDefinitions = [...displayData].sort(() => Math.random() - 0.5);
+
+        displayData.forEach((item, idx) => {
+          const wordEl = document.createElement('div');
+          wordEl.className = 'item';
+          wordEl.id = `word-${idx}`;
+          wordEl.dataset.originalId = idx;
+          wordEl.textContent = item.word;
+          wordsDiv.appendChild(wordEl);
+        });
+
+        shuffledDefinitions.forEach((item, idx) => {
+          const defEl = document.createElement('div');
+          defEl.className = 'item';
+          defEl.id = `def-${idx}`;
+          // Cari ID asli dari definisi ini di displayData
+          defEl.dataset.originalId = displayData.findIndex(d => d.definition === item.definition);
+          defEl.textContent = item.definition;
+          defsDiv.appendChild(defEl);
+        });
+
+        attachEventListeners();
+        gameActive = true; // Game siap dimainkan
+        showMessage('Game Dimulai! Cocokkan kata dengan definisinya.');
+
+      } catch (error) {
+        console.error('Terjadi kesalahan:', error);
+        wordsDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        defsDiv.innerHTML = '';
+        showMessage(`Gagal memuat game: ${error.message}`, 'error');
+      }
+    }
+
+    function attachEventListeners() {
+      document.querySelectorAll('.item').forEach(el => {
+        el.addEventListener('click', () => {
+          if (!gameActive || el.classList.contains('matched')) {
+            return;
+          }
+
+          if (!selectedElement) {
+            selectedElement = el;
+            el.classList.add('selected');
+          } else if (selectedElement === el) {
+            selectedElement.classList.remove('selected');
+            selectedElement = null;
+          } else {
+            const isSelectedWord = selectedElement.closest('#words');
+            const isCurrentWord = el.closest('#words');
+
+            if (isSelectedWord && isCurrentWord || !isSelectedWord && !isCurrentWord) {
+              showMessage('Kamu harus mencocokkan kata dengan definisi atau sebaliknya.');
+              selectedElement.classList.remove('selected');
+              selectedElement = null;
+              return;
+            }
+
+            const selectedOriginalId = selectedElement.dataset.originalId;
+            const currentOriginalId = el.dataset.originalId;
+
+            if (selectedOriginalId === currentOriginalId) {
+              const newLine = new LeaderLine(
+                selectedElement,
+                el,
+                { color: 'var(--matched-border)', size: 3, endLabel: LeaderLine.pathLabel('✔️') }
+              );
+              currentLines.push(newLine);
+
+              selectedElement.classList.remove('selected');
+              selectedElement.classList.add('matched');
+              el.classList.add('matched');
+
+              showMessage('Cocok!', 'success');
+              matchedPairs++;
+              if (matchedPairs === totalPairs) {
+                gameActive = false; // Game selesai
+                setTimeout(() => {
+                  gameOverScreen.style.display = 'flex';
+                }, 800); // Tampilkan layar game over setelah sedikit jeda
+              }
+            } else {
+              const temporaryLine = new LeaderLine(
+                selectedElement,
+                el,
+                { color: 'red', size: 3, endLabel: LeaderLine.pathLabel('❌') }
+              );
+              setTimeout(() => {
+                temporaryLine.remove();
+              }, 700);
+
+              showMessage('Tidak cocok, coba lagi.');
+            }
+
+            selectedElement.classList.remove('selected');
+            selectedElement = null;
+          }
+        });
+      });
+    }
+
+    // --- Event Listener untuk Tombol Next ---
+    nextButton.addEventListener('click', loadData);
+
+    // Panggil fungsi loadData saat halaman dimuat
+    loadData();
+  </script>
+</body>
+</html>

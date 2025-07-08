@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koleksi Aplikasi Saya</title>
+    <link rel="icon" href="./public/images/icon.png" type="image/png">
+    <link rel="stylesheet" href="./public/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Koleksi Aplikasi Saya</h1>
+        <p>Jelajahi aplikasi favorit saya.</p>
+    </header>
+    <main id="app-container">
+        </main>
+
+    <script>
+        async function loadApps() {
+            try {
+                const res = await fetch('./public/data/app.json');
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const apps = await res.json();
+                const appContainer = document.getElementById('app-container');
+
+                apps.forEach(app => {
+                    const card = document.createElement('a'); // Ganti div menjadi 'a' untuk tautan
+                    card.className = 'card';
+                    card.href = app.directory; // Mengarahkan ke direktori yang diinginkan
+                    card.target = '_blank'; // Membuka di tab baru (opsional)
+
+                    const iconPath = `${app.directory}/public/images/icon.png`; // Path ikon
+
+                    card.innerHTML = `
+                        <img src="${iconPath}" alt="${app.title} ikon">
+                        <div class="card-content">
+                            <h3>${app.title}</h3>
+                            <p>${app.description}</p>
+                        </div>
+                    `;
+                    appContainer.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Gagal memuat aplikasi:", error);
+                document.getElementById('app-container').innerHTML = '<p>Maaf, ada masalah saat memuat aplikasi.</p>';
+            }
+        }
+
+        loadApps();
+    </script>
+</body>
+</html>
