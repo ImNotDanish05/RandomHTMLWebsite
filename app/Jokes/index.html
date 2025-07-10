@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>😂 Random Joke Dashboard by Danish Senpai~</title>
+<style>
+  body {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+  }
+  h1 {
+    color: #ff9800;
+    margin-bottom: 10px;
+  }
+  .settings {
+    background-color: #333;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  input[type="text"], input[type="number"] {
+    width: 150px;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    border: none;
+  }
+  #joke {
+    background-color: #444;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    text-align: center;
+    font-size: 1.2em;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  }
+</style>
+</head>
+<body>
+<h1>😂 Random Joke Dashboard by Danish Senpai~</h1>
+
+<div class="settings">
+  <div>
+    <label>Search text:</label>
+    <input type="text" id="searchText" placeholder="e.g. test">
+  </div>
+  <div>
+    <label>Refresh every (sec):</label>
+    <input type="number" id="intervalSec" value="10" min="1">
+  </div>
+  <button onclick="startFetching()">Start</button>
+  <button onclick="stopFetching()">Stop</button>
+</div>
+
+<div id="joke">Waiting for joke...</div>
+
+<script>
+let intervalId = null;
+
+function startFetching() {
+  if (intervalId) clearInterval(intervalId);
+  fetchAndShowJoke(); // langsung fetch pertama kali
+
+  const intervalSec = parseInt(document.getElementById('intervalSec').value) || 10;
+  intervalId = setInterval(fetchAndShowJoke, intervalSec * 1000);
+}
+
+function stopFetching() {
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+}
+
+async function fetchAndShowJoke() {
+  const searchText = document.getElementById('searchText').value.trim();
+  let url = "";
+
+  if (searchText.toLowerCase() === "any" || searchText === "") {
+    url = "https://v2.jokeapi.dev/joke/Any";
+  } else {
+    url = `https://v2.jokeapi.dev/joke/Any?contains=${encodeURIComponent(searchText)}`;
+  }
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    let jokeText = "";
+
+    if (data.error) {
+      jokeText = "No joke found! 😢";
+    } else if (data.type === "single") {
+      jokeText = data.joke;
+    } else if (data.type === "twopart") {
+      jokeText = data.setup + " 🤔\n\n" + data.delivery;
+    } else {
+      jokeText = "Unknown format!";
+    }
+
+    document.getElementById('joke').textContent = jokeText;
+  } catch (e) {
+    document.getElementById('joke').textContent = "Failed to fetch joke!";
+    console.error(e);
+  }
+}
+</script>
+</body>
+</html>
