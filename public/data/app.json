@@ -3,5 +3,10 @@
     "directory": "./app/MatchTheSentence/",
     "title": "Matching Game",
     "description": "A fun matching game to connect words and definitions!"
+  },
+  {
+    "directory": "./app/DemoBerita/",
+    "title": "Demo Berita",
+    "description": "Berita demo untuk tugas Crazy Eight di Desain UIUX"
   }
 ]
