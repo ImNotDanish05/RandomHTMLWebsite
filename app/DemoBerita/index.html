@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dabi News — Mockup HTML (Kompas-inspired)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="description" content="Demo mockup website berita: home → kategori → artikel, fokus kenyamanan baca (tanpa popup, tanpa autoplay, tanpa pagination)." />
+</head>
+<body class="bg-gray-100 text-gray-900 selection:bg-black selection:text-white">
+  <!-- App Root -->
+  <div id="app"></div>
+
+  <script>
+    // ---------------------------------------------
+    // Utilities
+    // ---------------------------------------------
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+    const fmtDate = (d) => new Date(d).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+
+    // App State
+    const state = {
+      view: 'home', // 'home' | 'category' | 'article'
+      category: 'headline',
+      query: '',
+      currentArticle: null,
+      quick: [], // quick-compare items
+      focusMode: false,
+    };
+
+    // Data (Mock)
+    const CATEGORIES = [
+      { id: 'headline', label: 'Headline' },
+      { id: 'nasional', label: 'Nasional' },
+      { id: 'global', label: 'Global' },
+      { id: 'tekno', label: 'Tekno' },
+      { id: 'bola', label: 'Bola' },
+      { id: 'money', label: 'Money' },
+      { id: 'lifestyle', label: 'Lifestyle' },
+    ];
+
+    const PLACEHOLDER = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1600&auto=format&fit=crop';
+
+    const mockArticles = [
+      {
+        id: 'a-001',
+        category: 'headline',
+        title: 'Pemilu Damai 2025: KPU Umumkan Jadwal Tahapan Lengkap',
+        summary: 'KPU merilis tahapan lengkap pemilu 2025, dorong partisipasi pemilih muda dan transparansi data.',
+        content: [
+          'Komisi Pemilihan Umum (KPU) mengumumkan rangkaian tahapan Pemilu 2025 dengan fokus pada transparansi dan partisipasi pemilih muda.',
+          'Berbagai inovasi digital akan dihadirkan, termasuk pemantauan real-time serta kanal pelaporan cepat untuk menjaga akurasi data.',
+          'Peneliti menilai langkah ini dapat meningkatkan kepercayaan publik, selama keamanan data dan aksesibilitas diperhatikan.'
+        ],
+        time: '2025-10-15T09:30:00+07:00',
+        img: PLACEHOLDER,
+        tags: ['Pemilu', 'Kebijakan', 'Transparansi'],
+        source: 'Redaksi Dabi',
+      },
+      {
+        id: 'a-002',
+        category: 'tekno',
+        title: 'Startup AI Lokal Rilis Model Ringan untuk Perangkat Low-End',
+        summary: 'Model AI hemat daya diklaim bisa berjalan di ponsel entry-level, tekankan privasi perangkat.',
+        content: [
+          'Perusahaan rintisan AI lokal merilis model bahasa mini yang dapat berjalan di perangkat low-end dengan konsumsi memori yang rendah.',
+          'Pendekatan on-device ini disebut mampu menjaga privasi pengguna sekaligus menekan latensi.',
+          'Pakar menilai ekosistem developer akan jadi faktor kunci adopsi jangka panjang.'
+        ],
+        time: '2025-10-15T10:10:00+07:00',
+        img: 'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1600&auto=format&fit=crop',
+        tags: ['AI', 'On-device', 'Privasi'],
+        source: 'Desk Tekno',
+      },
+      {
+        id: 'a-003',
+        category: 'nasional',
+        title: 'Transportasi Publik Jakarta Uji Jalur Sepeda Terlindungi',
+        summary: 'Uji coba jalur sepeda terlindungi diperluas, kolaborasi Dishub dan komunitas pesepeda.',
+        content: [
+          'Dinas Perhubungan DKI Jakarta memperluas uji coba jalur sepeda terlindungi guna meningkatkan keamanan pesepeda.',
+          'Rute baru menghubungkan pusat perkantoran dengan kawasan hunian, ditujukan untuk memfasilitasi komuter harian.',
+          'Evaluasi tiga bulan akan menilai dampak terhadap keselamatan dan kemacetan.'
+        ],
+        time: '2025-10-14T16:00:00+07:00',
+        img: 'https://images.unsplash.com/photo-1530554764233-e79e16c91d08?q=80&w=1600&auto=format&fit=crop',
+        tags: ['Transportasi', 'Jakarta', 'Sepeda'],
+        source: 'Nasional',
+      },
+      {
+        id: 'a-004',
+        category: 'global',
+        title: 'PBB Serukan Aksi Iklim Lebih Ambisius Jelang KTT Tahunan',
+        summary: 'Sekretaris Jenderal PBB dorong target emisi lebih ketat dan pendanaan transisi energi.',
+        content: [
+          'Menjelang KTT iklim tahunan, PBB menyerukan komitmen baru untuk pembiayaan transisi energi di negara berkembang.',
+          'Anjuran meliputi percepatan pensiun PLTU tua dan percepatan adopsi energi terbarukan.',
+          'Negosiator berharap adanya peta jalan pendanaan yang lebih jelas.'
+        ],
+        time: '2025-10-13T12:00:00+07:00',
+        img: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1600&auto=format&fit=crop',
+        tags: ['Iklim', 'PBB', 'Energi'],
+        source: 'Desk Global',
+      },
+      {
+        id: 'a-005',
+        category: 'bola',
+        title: 'Derby Panas: Pelatih Ungkap Strategi High-Press',
+        summary: 'Jelang pertandingan derby, pelatih menyiapkan pressing agresif dan rotasi lini tengah.',
+        content: [
+          'Pelatih menekankan pentingnya intensitas dan transisi cepat menghadapi rival sekota.',
+          'Skuad dipastikan lengkap, dengan beberapa pemain muda siap tampil.',
+          'Analis memprediksi duel antar gelandang jadi kunci hasil akhir.'
+        ],
+        time: '2025-10-15T20:00:00+07:00',
+        img: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop',
+        tags: ['Sepak Bola', 'Taktik', 'Derby'],
+        source: 'Olahraga',
+      },
+      {
+        id: 'a-006',
+        category: 'money',
+        title: 'Rupiah Menguat Tipis, Pasar Tunggu Data Inflasi',
+        summary: 'Rupiah bergerak menguat tipis terhadap dolar seiring sikap wait-and-see jelang rilis inflasi.',
+        content: [
+          'Nilai tukar rupiah menguat tipis di tengah volume perdagangan yang relatif rendah.',
+          'Pelaku pasar menanti rilis data inflasi domestik untuk menentukan arah kebijakan suku bunga selanjutnya.',
+          'Analis menyarankan diversifikasi aset menghadapi volatilitas global.'
+        ],
+        time: '2025-10-16T09:00:00+07:00',
+        img: 'https://images.unsplash.com/photo-1565514020179-026b92b84bb8?q=80&w=1600&auto=format&fit=crop',
+        tags: ['Rupiah', 'Inflasi', 'Pasar'],
+        source: 'Money Desk',
+      },
+      {
+        id: 'a-007',
+        category: 'lifestyle',
+        title: 'Tren Minimalisme Digital: Kurangi Notifikasi, Tambah Fokus',
+        summary: 'Praktik digital declutter makin diminati untuk kesehatan mental dan produktivitas.',
+        content: [
+          'Minimalisme digital mendorong pengguna untuk menata ulang notifikasi, aplikasi, dan kebiasaan online.',
+          'Penelitian awal menunjukkan korelasi dengan peningkatan fokus dan penurunan stres.',
+          'Langkah praktis mencakup batch notifications dan mode fokus terjadwal.'
+        ],
+        time: '2025-10-12T08:45:00+07:00',
+        img: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1600&auto=format&fit=crop',
+        tags: ['Produktivitas', 'Kesehatan Mental', 'Digital'],
+        source: 'Gaya Hidup',
+      },
+      {
+        id: 'a-008',
+        category: 'headline',
+        title: 'Bandara Baru Diresmikan, Fokus ke Konektivitas Kawasan Timur',
+        summary: 'Bandara baru diresmikan untuk memperkuat konektivitas logistik dan pariwisata wilayah timur.',
+        content: [
+          'Bandara baru ini diharapkan menjadi pengungkit ekonomi daerah, dengan rute kargo dan penumpang.',
+          'Pemerintah menargetkan kolaborasi maskapai untuk membuka jalur strategis baru.',
+          'Pakar mengingatkan pentingnya integrasi antarmoda untuk dampak maksimal.'
+        ],
+        time: '2025-10-16T06:30:00+07:00',
+        img: 'https://images.unsplash.com/photo-1521292270410-a8c44e4706f5?q=80&w=1600&auto=format&fit=crop',
+        tags: ['Infrastruktur', 'Pariwisata', 'Logistik'],
+        source: 'Redaksi Dabi',
+      },
+    ];
+
+    // ---------------------------------------------
+    // Rendering
+    // ---------------------------------------------
+    function render() {
+      const container = document.getElementById('app');
+      container.innerHTML = `
+        ${renderHeader()}
+        ${renderTipbar()}
+        ${state.view === 'home' ? renderHome() : ''}
+        ${state.view === 'category' ? renderCategory(state.category) : ''}
+        ${state.view === 'article' && state.currentArticle ? renderArticle(state.currentArticle) : ''}
+        ${renderFooter()}
+        ${renderQuickDrawer()}
+      `;
+
+      afterRender();
+    }
+
+    function renderHeader() {
+      const categoryButtons = CATEGORIES.map(c => `
+        <button data-cat="${c.id}" class="rounded-full px-3 py-1 ${state.category === c.id ? 'bg-black text-white' : 'hover:bg-gray-100'}">
+          ${c.label}
+        </button>
+      `).join('');
+
+      return `
+        <header class="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur">
+          <div class="mx-auto max-w-7xl px-4">
+            <div class="flex items-center justify-between py-3">
+              <div class="flex items-center gap-3">
+                <button id="brand-btn" class="text-xl font-extrabold tracking-tight" aria-label="Dabi News">
+                  <span class="rounded bg-black px-2 py-1 text-white">Dabi</span>
+                  <span class="text-black"> News</span>
+                </button>
+                <span class="hidden text-xs text-gray-400 sm:inline">UX-first mockup · Kompas-inspired</span>
+              </div>
+              <div class="flex w-full max-w-xl items-center gap-2 px-3">
+                <input id="search-input" value="${escapeHtml(state.query)}" placeholder="Cari berita cepat tanpa gangguan…" class="w-full rounded-full border px-4 py-2 text-sm outline-none focus:ring" />
+              </div>
+              <div class="flex items-center gap-2">
+                <button id="focus-btn" class="rounded-full border px-3 py-1 text-sm ${state.focusMode ? 'bg-black text-white' : 'bg-white hover:bg-gray-50'}" title="Mode Fokus (F)">
+                  ${state.focusMode ? 'Keluar Fokus' : 'Mode Fokus'}
+                </button>
+              </div>
+            </div>
+            <nav class="flex flex-wrap items-center gap-2 pb-3 text-sm">
+              ${categoryButtons}
+            </nav>
+          </div>
+        </header>
+      `;
+    }
+
+    function renderTipbar() {
+      return `
+        <div class="border-b bg-amber-50">
+          <div class="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-2 text-xs text-amber-800">
+            <span class="rounded bg-amber-100 px-2 py-1 font-semibold">Tips</span>
+            <span>Tekan <kbd class="rounded border px-1">F</kbd> untuk Mode Fokus · Baca tanpa gangguan (no popup, no autoplay, no pagination)</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function filterArticles({ query, category }) {
+      const q = (query || '').toLowerCase();
+      return mockArticles.filter(a => {
+        const byCat = category ? a.category === category : true;
+        const text = `${a.title} ${a.summary} ${(a.tags||[]).join(' ')}`.toLowerCase();
+        return byCat && (q ? text.includes(q) : true);
+      });
+    }
+
+    function renderHome() {
+      const articles = filterArticles({ query: state.query, category: undefined });
+      const hero = articles.find(a => a.category === 'headline') || articles[0];
+      const rest = (articles || []).filter(a => hero && a.id !== hero.id);
+
+      const trending = rest.slice(0, 5).map(a => `
+        <li>
+          <button data-open="${a.id}" class="text-left">
+            <div class="text-xs text-gray-500">${a.category.toUpperCase()}</div>
+            <div class="line-clamp-2 font-medium hover:underline">${a.title}</div>
+          </button>
+        </li>
+      `).join('');
+
+      const categoryGrids = CATEGORIES.filter(c => c.id !== 'headline').map(c => {
+        const items = articles.filter(a => a.category === c.id).slice(0, 4).map(a => `
+          <div class="rounded-xl border bg-white p-3 hover:shadow">
+            <div class="relative aspect-[16/9] overflow-hidden rounded-lg bg-gray-100">
+              <img src="${a.img}" alt="" class="h-full w-full object-cover" />
+            </div>
+            <div class="mt-2 text-xs text-gray-500">${fmtDate(a.time)}</div>
+            <button data-open="${a.id}" class="mt-1 line-clamp-2 text-left text-sm font-semibold hover:underline">${a.title}</button>
+          </div>
+        `).join('');
+
+        if (!items) return '';
+        return `
+          <section class="mb-8">
+            <div class="mb-3 flex items-baseline justify-between">
+              <h3 class="text-xl font-bold">${c.label}</h3>
+              <button data-nav-cat="${c.id}" class="text-sm text-blue-700 hover:underline">Lihat semua »</button>
+            </div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              ${items}
+            </div>
+          </section>
+        `;
+      }).join('');
+
+      return `
+        <main class="mx-auto max-w-7xl px-4 py-6">
+          <section class="mb-8 grid grid-cols-12 gap-4">
+            <div class="col-span-12 overflow-hidden rounded-2xl border bg-white sm:col-span-8">
+              ${hero ? `
+              <div class="relative">
+                <img src="${hero.img}" alt="" class="h-64 w-full object-cover sm:h-[420px]" />
+                <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-6 text-white">
+                  <div class="mb-1 text-xs text-gray-200">${hero.category.toUpperCase()} · ${fmtDate(hero.time)}</div>
+                  <h2 class="mb-2 text-2xl font-extrabold sm:text-3xl">${hero.title}</h2>
+                  <p class="mb-4 max-w-2xl text-sm text-gray-200">${hero.summary}</p>
+                  <div class="flex gap-2">
+                    <button data-open="${hero.id}" class="rounded-full bg-white/95 px-4 py-2 text-sm font-semibold text-black hover:bg-white">Baca Sekarang</button>
+                    <button data-quick="${hero.id}" class="rounded-full bg-black/40 px-4 py-2 text-sm font-semibold text-white hover:bg-black/60">Buka Cepat</button>
+                  </div>
+                </div>
+              </div>
+              ` : ''}
+            </div>
+            <aside class="col-span-12 sm:col-span-4">
+              <div class="rounded-2xl border bg-white p-4">
+                <h3 class="mb-3 font-semibold">Trending Hari Ini</h3>
+                <ul class="space-y-3">${trending}</ul>
+              </div>
+              <div class="mt-4 rounded-2xl border bg-gradient-to-br from-gray-50 to-gray-100 p-4 text-center text-sm text-gray-500">
+                Slot Iklan (non-intrusive, tidak menutupi konten)
+              </div>
+            </aside>
+          </section>
+
+          ${categoryGrids}
+        </main>
+      `;
+    }
+
+    function renderCategory(catId) {
+      const catLabel = (CATEGORIES.find(c => c.id === catId) || {}).label || 'Kategori';
+      // default sort: latest
+      const items = filterArticles({ query: state.query, category: catId }).sort((a,b) => new Date(b.time) - new Date(a.time));
+
+      const cards = items.map(a => cardHTML(a)).join('');
+
+      return `
+        <main class="mx-auto max-w-7xl px-4 py-6">
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-2xl font-extrabold">${catLabel}</h2>
+            <div class="flex items-center gap-2 text-sm">
+              <span class="text-gray-500">Urutkan:</span>
+              <select id="sort-select" class="rounded border px-2 py-1">
+                <option value="latest" selected>Terbaru</option>
+                <option value="oldest">Terlama</option>
+                <option value="az">A-Z</option>
+              </select>
+            </div>
+          </div>
+          <div id="cat-grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2">${cards}</div>
+          <div class="mt-6 rounded-xl border bg-gray-50 p-4 text-center text-sm text-gray-500">Slot Iklan Bawah (non-intrusive)</div>
+        </main>
+      `;
+    }
+
+    function cardHTML(a) {
+      return `
+        <article class="group grid grid-cols-12 gap-4 rounded-xl border bg-white p-3 hover:shadow">
+          <div class="col-span-12 overflow-hidden rounded-lg sm:col-span-5">
+            <div class="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-gray-100">
+              <img src="${a.img}" alt="" class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+            </div>
+          </div>
+          <div class="col-span-12 sm:col-span-7">
+            <div class="mb-1 text-xs text-gray-500">${a.category.toUpperCase()} · ${fmtDate(a.time)}</div>
+            <h3 class="mb-2 line-clamp-2 text-lg font-bold leading-snug">${a.title}</h3>
+            <p class="mb-3 line-clamp-2 text-sm text-gray-600">${a.summary}</p>
+            <div class="flex flex-wrap items-center gap-2">
+              <button data-open="${a.id}" class="rounded-full bg-black px-3 py-1 text-sm text-white hover:bg-gray-800">Baca</button>
+              <button data-quick="${a.id}" class="rounded-full border px-3 py-1 text-sm hover:bg-gray-50">Buka Cepat (tab samping)</button>
+              <div class="ml-auto flex items-center gap-1 text-xs text-gray-500">
+                ${(a.tags||[]).map(t => `<span class=\"rounded-full bg-gray-100 px-2 py-0.5\">#${t}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderArticle(a) {
+      const words = (a.content.join(' ').split(' ').length || 200);
+      const readMin = Math.max(1, Math.round(words / 220));
+
+      // Reading progress bar (appears in article view)
+      const progressBar = `
+        <div class="sticky top-[52px] z-40 w-full border-b bg-white/90 backdrop-blur">
+          <div class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2 text-sm">
+            <div class="h-1 w-full rounded bg-gray-100">
+              <div id="read-progress" class="h-1 rounded bg-black" style="width:0%"></div>
+            </div>
+            <span id="read-percent" class="w-12 text-right text-xs text-gray-600">0%</span>
+          </div>
+        </div>`;
+
+      const related = mockArticles.filter(x => x.category === a.category && x.id !== a.id).slice(0,6).map(r => `
+        <div class="rounded-xl border bg-white p-3 hover:shadow">
+          <div class="relative aspect-[16/9] overflow-hidden rounded-lg bg-gray-100">
+            <img src="${r.img}" alt="" class="h-full w-full object-cover" />
+          </div>
+          <div class="mt-2 text-xs text-gray-500">${fmtDate(r.time)}</div>
+          <button data-open="${r.id}" class="mt-1 line-clamp-2 text-left text-sm font-semibold hover:underline">${r.title}</button>
+        </div>
+      `).join('');
+
+      return `
+        ${progressBar}
+        <main id="article-root" class="${state.focusMode ? 'mx-auto max-w-3xl px-4 py-6' : 'mx-auto max-w-7xl px-4 py-6'}">
+          <button id="back-btn" class="mb-4 inline-flex items-center gap-2 text-sm text-blue-700 hover:underline">← Kembali</button>
+
+          <h1 class="mb-2 text-3xl font-extrabold leading-tight">${a.title}</h1>
+          <div class="mb-4 flex flex-wrap items-center gap-3 text-xs text-gray-500">
+            <span>${a.category.toUpperCase()}</span>
+            <span>•</span>
+            <span>${fmtDate(a.time)}</span>
+            <span>•</span>
+            <span>${readMin} menit baca</span>
+            <span class="ml-auto">Sumber: ${a.source}</span>
+          </div>
+
+          <div class="mb-4 overflow-hidden rounded-xl">
+            <img src="${a.img}" alt="" class="h-72 w-full object-cover sm:h-[420px]" />
+          </div>
+
+          <article id="article-content" class="prose max-w-none ${state.focusMode ? 'prose-p:leading-7 sm:prose-lg' : ''}">
+            ${a.content.map(p => `<p>${escapeHtml(p)}</p>`).join('')}
+          </article>
+
+          <div class="mt-6 flex flex-wrap items-center gap-2">
+            <button data-quick="${a.id}" class="rounded-full border px-3 py-1 text-sm hover:bg-gray-50">Buka Cepat (tab samping)</button>
+            <div class="ml-auto flex items-center gap-1 text-xs text-gray-500">
+              ${(a.tags||[]).map(t => `<span class=\"rounded-full bg-gray-100 px-2 py-0.5\">#${t}</span>`).join('')}
+            </div>
+          </div>
+
+          <section class="mt-10">
+            <h3 class="mb-3 text-lg font-bold">Berita Terkait</h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">${related}</div>
+          </section>
+        </main>
+
+        ${!state.focusMode ? `
+        <aside class="mx-auto max-w-7xl px-4">
+          <div class="rounded-xl border bg-gray-50 p-4 text-center text-sm text-gray-500">Slot Iklan Samping (non-intrusive, tidak menutupi konten)</div>
+        </aside>` : ''}
+      `;
+    }
+
+    function renderFooter() {
+      return `
+        <footer class="mt-10 border-t bg-white">
+          <div class="mx-auto max-w-7xl px-4 py-8 text-xs text-gray-500">
+            <div class="mb-2 font-semibold text-gray-700">Dabi News</div>
+            <div>Mockup demo — terinspirasi gaya Kompas, dioptimalkan kenyamanan baca (tanpa pop-up, non-intrusive ads, mode fokus, tanpa pagination).</div>
+          </div>
+        </footer>
+      `;
+    }
+
+    function renderQuickDrawer() {
+      if (!state.quick.length) return '';
+      const cards = state.quick.map(a => `
+        <div class="rounded-xl border bg-white p-2">
+          <div class="relative aspect-[16/9] overflow-hidden rounded-lg bg-gray-100">
+            <img src="${a.img}" alt="" class="h-full w-full object-cover" />
+          </div>
+          <button data-open="${a.id}" class="mt-2 line-clamp-2 text-left text-sm font-semibold hover:underline">${a.title}</button>
+          <div class="mt-2 flex items-center justify-between text-xs text-gray-500">
+            <span>${a.category.toUpperCase()}</span>
+            <button data-closequick="${a.id}" class="rounded px-2 py-1 hover:bg-gray-50">Tutup</button>
+          </div>
+        </div>
+      `).join('');
+
+      return `
+        <div class="fixed bottom-3 right-3 z-[60] w-full max-w-2xl rounded-2xl border bg-white shadow-2xl">
+          <div class="flex items-center justify-between border-b p-3">
+            <div class="font-semibold">Baca Cepat (Tab Samping)</div>
+            <div class="flex items-center gap-2 text-sm">
+              <button id="drawer-toggle" class="rounded border px-2 py-1">Sembunyikan</button>
+            </div>
+          </div>
+          <div id="drawer-body" class="grid max-h-80 grid-cols-2 gap-3 overflow-auto p-3 sm:grid-cols-3">${cards}</div>
+        </div>
+      `;
+    }
+
+    // ---------------------------------------------
+    // Events & Behaviors
+    // ---------------------------------------------
+    function afterRender() {
+      // Brand → Home
+      const brandBtn = document.getElementById('brand-btn');
+      if (brandBtn) brandBtn.onclick = () => navigate('home');
+
+      // Search
+      const search = document.getElementById('search-input');
+      if (search) search.oninput = (e) => { state.query = e.target.value; render(); };
+
+      // Focus Mode
+      const focusBtn = document.getElementById('focus-btn');
+      if (focusBtn) focusBtn.onclick = toggleFocusMode;
+
+      // Category nav
+      $$('button[data-cat]').forEach(btn => {
+        btn.onclick = () => {
+          const cat = btn.getAttribute('data-cat');
+          if (cat === 'headline') navigate('home'); else navigate('category', { category: cat });
+        }
+      });
+
+      // Open article buttons
+      $$('button[data-open]').forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute('data-open');
+          const a = mockArticles.find(x => x.id === id);
+          if (a) openArticle(a);
+        }
+      });
+
+      // Quick add
+      $$('button[data-quick]').forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute('data-quick');
+          const a = mockArticles.find(x => x.id === id);
+          if (a && !state.quick.find(q => q.id === a.id)) state.quick.push(a);
+          render();
+        }
+      });
+
+      // Category grid → sort
+      const sortSel = document.getElementById('sort-select');
+      if (sortSel) {
+        sortSel.onchange = () => {
+          const grid = document.getElementById('cat-grid');
+          let items = filterArticles({ query: state.query, category: state.category });
+          if (sortSel.value === 'latest') items.sort((a,b) => new Date(b.time) - new Date(a.time));
+          if (sortSel.value === 'oldest') items.sort((a,b) => new Date(a.time) - new Date(b.time));
+          if (sortSel.value === 'az') items.sort((a,b) => a.title.localeCompare(b.title));
+          grid.innerHTML = items.map(cardHTML).join('');
+          afterRender(); // rebind events in new cards
+        };
+      }
+
+      // Home: See all in category
+      $$('button[data-nav-cat]').forEach(btn => {
+        btn.onclick = () => {
+          const cat = btn.getAttribute('data-nav-cat');
+          navigate('category', { category: cat });
+        };
+      });
+
+      // Article: back button
+      const backBtn = document.getElementById('back-btn');
+      if (backBtn) backBtn.onclick = () => navigate('home');
+
+      // Drawer hide/show
+      const drawerToggle = document.getElementById('drawer-toggle');
+      if (drawerToggle) drawerToggle.onclick = () => {
+        const body = document.getElementById('drawer-body');
+        const hidden = body.classList.toggle('hidden');
+        drawerToggle.textContent = hidden ? 'Tampilkan' : 'Sembunyikan';
+      };
+
+      // Drawer close single
+      $$('button[data-closequick]').forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute('data-closequick');
+          state.quick = state.quick.filter(x => x.id !== id);
+          render();
+        }
+      });
+
+      // Keyboard shortcut: F for focus mode
+      window.onkeydown = (e) => {
+        if ((e.key || '').toLowerCase() === 'f') {
+          e.preventDefault();
+          toggleFocusMode();
+        }
+      };
+
+      // Reading progress (article only)
+      const articleRoot = document.getElementById('article-root');
+      if (articleRoot) {
+        const content = document.getElementById('article-content');
+        const prog = document.getElementById('read-progress');
+        const pctText = document.getElementById('read-percent');
+
+        const onScroll = () => {
+          const total = content.scrollHeight - window.innerHeight;
+          const scrolled = Math.max(0, window.scrollY - articleRoot.offsetTop);
+          const ratio = Math.max(0, Math.min(1, total > 0 ? scrolled / total : 0));
+          const pct = Math.round(ratio * 100);
+          if (prog) prog.style.width = pct + '%';
+          if (pctText) pctText.textContent = pct + '%';
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+    }
+
+    function navigate(view, opts = {}) {
+      state.view = view;
+      if (view === 'home') {
+        state.category = 'headline';
+        state.currentArticle = null;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      if (view === 'category') {
+        state.category = opts.category || state.category;
+        state.currentArticle = null;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      if (view === 'article') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      render();
+    }
+
+    function openArticle(a) {
+      state.currentArticle = a;
+      navigate('article');
+    }
+
+    function toggleFocusMode() {
+      state.focusMode = !state.focusMode;
+      if (state.focusMode) {
+        document.body.classList.add('focus-mode');
+      } else {
+        document.body.classList.remove('focus-mode');
+      }
+      render();
+    }
+
+    function escapeHtml(str) {
+      return ('' + str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
