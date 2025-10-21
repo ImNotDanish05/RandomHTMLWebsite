@@ -13,5 +13,10 @@
     "directory": "./app/CanvaCrash/",
     "title": "Canva Crash",
     "description": "Tampilan Canva Crash seperti apa"
+  },
+  {
+    "directory": "./app/AnimeScroll/",
+    "title": "Anime Scroll",
+    "description": "Deep Scrolling Anime until u tired xD"
   }
 ]
