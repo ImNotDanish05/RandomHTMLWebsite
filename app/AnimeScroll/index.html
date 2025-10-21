@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WaifuPics — Fullscreen Prefetch Viewer</title>
+  <!-- Tailwind via CDN (no build step) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="color-scheme" content="dark" />
+  <style>
+    html, body { height: 100%; }
+    body { overflow: hidden; background: #000; }
+    img, picture { user-select: none; -webkit-user-drag: none; }
+    #track { will-change: transform; }
+    ::-webkit-scrollbar { width: 0; height: 0; }
+  </style>
+</head>
+<body class="h-full text-white">
+  <!-- APP ROOT -->
+  <div id="app" class="relative w-screen h-screen bg-black">
+    <!-- Slides Track -->
+    <div id="track" class="absolute inset-0 flex transition-transform ease-out"></div>
+
+    <!-- Boot screen -->
+    <div id="boot" class="absolute inset-0 grid place-items-center bg-black">
+      <div class="flex flex-col items-center gap-4">
+        <div class="h-10 w-10 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+        <p class="text-sm text-white/70">Preparing images… (loading 2 slides)</p>
+      </div>
+    </div>
+
+    <!-- Caption -->
+    <div id="caption"
+         class="absolute bottom-2 left-2 max-w-[80vw] text-xs leading-snug text-white/80 bg-black/35 backdrop-blur px-2 py-1 rounded hidden"></div>
+
+    <!-- HUD (two-row: top main, bottom sub-status) -->
+    <div class="absolute bottom-2 right-2 text-xs bg-white/10 border border-white/10 backdrop-blur rounded px-2 py-1 select-none">
+      <div>
+        <span id="hudStatus">⏳</span>
+        <span class="mx-1">•</span>
+        <span id="hudCountdown">0.0s</span>
+        <span class="mx-1">•</span>
+        <span id="hudQueue">Q 0/0</span>
+      </div>
+      <div id="hudState2" class="text-[11px] text-white/70"></div>
+    </div>
+
+    <!-- Top bar controls -->
+    <div class="absolute top-2 right-2 flex items-center gap-2">
+      <button id="btnPlayPause"
+              class="px-3 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+              title="Play / Pause (Space)">
+        ⏸
+      </button>
+      <button id="btnNext"
+              class="px-3 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+              title="Next (ArrowRight)">
+        Next ▷
+      </button>
+      <button id="btnSettings"
+              class="px-3 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+              aria-controls="settingsPanel" aria-expanded="false" title="Settings (F)">
+        ⚙️ Settings
+      </button>
+    </div>
+
+    <!-- Help toast -->
+    <div id="toast"
+         class="pointer-events-none invisible opacity-0 transition-opacity duration-300
+                fixed bottom-16 left-1/2 -translate-x-1/2 bg-white/10 border border-white/10
+                backdrop-blur rounded px-3 py-2 text-xs">
+      Shortcuts: <b>F</b> Settings • <b>Space</b> Play/Pause • <b>→</b> Next • <b>?</b> Help
+    </div>
+
+    <!-- Settings overlay -->
+    <div id="settingsOverlay"
+         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden"
+         aria-hidden="true" role="dialog" aria-modal="true">
+      <!-- Panel -->
+      <aside id="settingsPanel"
+             class="absolute right-0 top-0 h-full w-full sm:w-[520px] bg-neutral-900 border-l border-white/10
+                    shadow-2xl overflow-y-auto transform transition-transform translate-x-full">
+        <header class="sticky top-0 z-10 bg-neutral-900/95 backdrop-blur border-b border-white/10 p-4 flex items-center justify-between">
+          <h2 class="text-lg font-semibold">Settings</h2>
+          <div class="flex items-center gap-2">
+            <button id="btnPlayPause2"
+                    class="px-3 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/30">
+              ⏸ Play/Pause
+            </button>
+            <button id="btnCloseSettings"
+                    class="px-3 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/30"
+                    aria-label="Close settings (F)">
+              ✕
+            </button>
+          </div>
+        </header>
+
+        <div class="p-4 space-y-6">
+          <!-- Sources -->
+          <section class="space-y-3">
+            <h3 class="font-semibold">Sources</h3>
+
+            <label class="flex items-center gap-2">
+              <input id="lockSfw" type="checkbox" class="accent-white" />
+              <span>Lock SFW only</span>
+            </label>
+
+            <div class="grid grid-cols-2 gap-4">
+              <!-- Category toggles -->
+              <div class="col-span-2">
+                <div class="flex items-center gap-6">
+                  <label class="flex items-center gap-2">
+                    <input id="catSfw" type="checkbox" class="accent-white" />
+                    <span>SFW</span>
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <input id="catNsfw" type="checkbox" class="accent-white" />
+                    <span>NSFW</span>
+                  </label>
+                </div>
+                <p class="text-[11px] text-white/50 mt-1">
+                  If a category has no endpoints checked, it means “all endpoints in that category”.
+                </p>
+              </div>
+
+              <!-- SFW endpoints -->
+              <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center justify-between">
+                  <h4 class="font-medium">SFW endpoints</h4>
+                  <div class="flex gap-2">
+                    <button id="sfwAll" class="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10">Select all</button>
+                    <button id="sfwNone" class="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10">Clear all</button>
+                  </div>
+                </div>
+                <div id="sfwList" class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm"></div>
+              </div>
+
+              <!-- NSFW endpoints -->
+              <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center justify-between">
+                  <h4 class="font-medium">NSFW endpoints</h4>
+                  <div class="flex gap-2">
+                    <button id="nsfwAll" class="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10">Select all</button>
+                    <button id="nsfwNone" class="text-xs px-2 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10">Clear all</button>
+                  </div>
+                </div>
+                <div id="nsfwList" class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm"></div>
+                <p id="nsfwLockHint" class="text-[11px] text-amber-300/80 mt-1 hidden">NSFW disabled while “Lock SFW only” is ON.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Playback & prefetch -->
+          <section class="space-y-3">
+            <h3 class="font-semibold">Playback</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <label class="flex flex-col gap-1">
+                <span class="text-sm">Seconds per slide</span>
+                <input id="secPerSlide" type="number" step="0.1" min="0.3" class="bg-neutral-800 border border-white/10 rounded px-2 py-1" />
+              </label>
+              <label class="flex items-center gap-2">
+                <input id="autoplay" type="checkbox" class="accent-white" />
+                <span>Autoplay</span>
+              </label>
+
+              <label class="flex flex-col gap-1">
+                <span class="text-sm">Prefetch count (1–6)</span>
+                <input id="prefetchCount" type="number" min="1" max="6" class="bg-neutral-800 border border-white/10 rounded px-2 py-1" />
+              </label>
+              <label class="flex flex-col gap-1">
+                <span class="text-sm">Concurrency (1–3)</span>
+                <input id="concurrency" type="number" min="1" max="3" class="bg-neutral-800 border border-white/10 rounded px-2 py-1" />
+              </label>
+
+              <label class="flex flex-col gap-1">
+                <span class="text-sm">Transition duration (ms)</span>
+                <input id="transitionMs" type="number" min="100" max="5000" class="bg-neutral-800 border border-white/10 rounded px-2 py-1" />
+              </label>
+              <label class="flex items-center gap-2">
+                <input id="pauseOnHover" type="checkbox" class="accent-white" />
+                <span>Pause on hover</span>
+              </label>
+            </div>
+          </section>
+
+          <!-- Display -->
+          <section class="space-y-3">
+            <h3 class="font-semibold">Display</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <label class="flex flex-col gap-1">
+                <span class="text-sm">Object fit</span>
+                <select id="objectFit" class="bg-neutral-800 border border-white/10 rounded px-2 py-1">
+                  <option value="contain">contain (no crop)</option>
+                  <option value="cover">cover</option>
+                </select>
+              </label>
+              <label class="flex items-center gap-2">
+                <input id="showCaption" type="checkbox" class="accent-white" />
+                <span>Show caption</span>
+              </label>
+            </div>
+          </section>
+
+          <!-- Networking -->
+          <section class="space-y-3">
+            <h3 class="font-semibold">Networking</h3>
+            <div class="grid grid-cols-3 gap-4">
+              <label class="flex flex-col gap-1">
+                <span class="text-sm">Max retries (0–10)</span>
+                <input id="maxRetries" type="number" min="0" max="10" class="bg-neutral-800 border border-white/10 rounded px-2 py-1" />
+              </label>
+              <label class="flex flex-col gap-1 col-span-2">
+                <span class="text-sm">Image load timeout (ms)</span>
+                <input id="imageTimeoutMs" type="number" min="1000" max="60000" class="bg-neutral-800 border border-white/10 rounded px-2 py-1" />
+              </label>
+            </div>
+          </section>
+
+          <!-- Apply -->
+          <section class="space-y-3">
+            <div class="flex flex-wrap gap-2">
+              <button id="btnApply"
+                      class="px-3 py-2 rounded bg-white/10 hover:bg-white/20 border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/30">
+                Apply & rebuild queue
+              </button>
+              <button id="btnPlayPause3"
+                      class="px-3 py-2 rounded bg-white/10 hover:bg-white/20 border border-white/10 focus:outline-none focus:ring-2 focus:ring-white/30">
+                Play/Pause
+              </button>
+            </div>
+            <p class="text-[11px] text-white/50">After applying, the app waits for 2 ready images before resuming.</p>
+          </section>
+
+          <!-- Import / Export -->
+          <section class="space-y-3">
+            <h3 class="font-semibold">Import / Export settings</h3>
+            <div class="flex flex-wrap gap-2">
+              <button id="btnExportFile"
+                      class="text-sm px-3 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10">Download .json</button>
+              <label class="text-sm px-3 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10 cursor-pointer">
+                Upload .json
+                <input id="fileImport" type="file" accept="application/json,.json" class="hidden">
+              </label>
+              <button id="btnCopy"
+                      class="text-sm px-3 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10">Copy to clipboard</button>
+              <button id="btnReset"
+                      class="text-sm px-3 py-1 rounded bg-red-500/20 hover:bg-red-500/30 border border-red-500/40">Reset to defaults</button>
+            </div>
+            <textarea id="jsonText" rows="6" class="w-full bg-neutral-800 border border-white/10 rounded p-2 text-xs"
+                      placeholder='Paste JSON here…'></textarea>
+            <button id="btnLoadText"
+                    class="text-sm px-3 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10">Load from text</button>
+          </section>
+
+          <footer class="py-6 text-center text-[11px] text-white/40">
+            Built with HTML + vanilla JS + Tailwind CDN. Uses <code>https://api.waifu.pics</code>.
+          </footer>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // -------------------------------
+    // CONSTANTS & DEFAULTS
+    // -------------------------------
+    const ENDPOINTS = {
+      sfw: [
+        'waifu','neko','shinobu','megumin','bully','cuddle','cry','hug','awoo',
+        'kiss','lick','pat','smug','bonk','yeet','blush','smile','wave',
+        'highfive','handhold','nom','bite','glomp','slap','kick','happy',
+        'wink','poke','dance','cringe'
+      ],
+      nsfw: ['waifu','neko','trap','blowjob']
+    };
+
+    const STORAGE_KEY = 'waifuViewerSettings.v1';
+
+    const DEFAULTS = {
+      lockSfw: true,
+      categories: { sfw: true, nsfw: false },
+      endpoints: {
+        sfw: { waifu: true, neko: true }, // only these two checked by default
+        nsfw: {}
+      },
+      secondsPerSlide: 5,
+      prefetchCount: 1,
+      transitionMs: 600,
+      objectFit: 'contain',
+      showCaption: false,
+      pauseOnHover: true,
+      concurrency: 2,
+      maxRetries: 3,
+      imageTimeoutMs: 12000,
+      autoplay: true
+    };
+
+    // -------------------------------
+    // ELEMENTS
+    // -------------------------------
+    const trackEl = document.getElementById('track');
+    const bootEl = document.getElementById('boot');
+    const captionEl = document.getElementById('caption');
+    const hudCountdownEl = document.getElementById('hudCountdown');
+    const hudStatusEl = document.getElementById('hudStatus');
+    const hudQueueEl = document.getElementById('hudQueue');
+    const hudState2El = document.getElementById('hudState2');
+    const appEl = document.getElementById('app');
+
+    const toastEl = document.getElementById('toast');
+
+    // Topbar buttons
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const btnPlayPause2 = document.getElementById('btnPlayPause2');
+    const btnPlayPause3 = document.getElementById('btnPlayPause3');
+    const btnNext = document.getElementById('btnNext');
+    const btnSettings = document.getElementById('btnSettings');
+
+    // Settings overlay
+    const overlayEl = document.getElementById('settingsOverlay');
+    const panelEl = document.getElementById('settingsPanel');
+    const btnCloseSettings = document.getElementById('btnCloseSettings');
+
+    // Settings inputs
+    const lockSfw = document.getElementById('lockSfw');
+    const catSfw = document.getElementById('catSfw');
+    const catNsfw = document.getElementById('catNsfw');
+    const sfwList = document.getElementById('sfwList');
+    const nsfwList = document.getElementById('nsfwList');
+    const sfwAll = document.getElementById('sfwAll');
+    const sfwNone = document.getElementById('sfwNone');
+    const nsfwAll = document.getElementById('nsfwAll');
+    const nsfwNone = document.getElementById('nsfwNone');
+    const nsfwLockHint = document.getElementById('nsfwLockHint');
+
+    const secPerSlide = document.getElementById('secPerSlide');
+    const prefetchCount = document.getElementById('prefetchCount');
+    const transitionMs = document.getElementById('transitionMs');
+    const objectFit = document.getElementById('objectFit');
+    const showCaption = document.getElementById('showCaption');
+    const pauseOnHover = document.getElementById('pauseOnHover');
+    const concurrency = document.getElementById('concurrency');
+    const maxRetries = document.getElementById('maxRetries');
+    const imageTimeoutMs = document.getElementById('imageTimeoutMs');
+    const autoplay = document.getElementById('autoplay');
+
+    const btnApply = document.getElementById('btnApply');
+
+    // Import / Export
+    const btnExportFile = document.getElementById('btnExportFile');
+    const fileImport = document.getElementById('fileImport');
+    const btnCopy = document.getElementById('btnCopy');
+    const btnReset = document.getElementById('btnReset');
+    const jsonText = document.getElementById('jsonText');
+    const btnLoadText = document.getElementById('btnLoadText');
+
+    // -------------------------------
+    // STATE
+    // -------------------------------
+    let settings = loadSettings();
+    let playing = !!settings.autoplay;
+    let pausedByHover = false;
+
+    // queue[0] = current; queue[1] = next (fully loaded)
+    const queue = [];
+
+    // Concurrency control
+    let inFlight = 0;
+    let sessionId = 0; // invalidate old async operations on rebuild
+
+    // Autoplay & cooldown
+    let initialized = false;     // render only after 2 slides ready (boot)
+    let sliding = false;         // prevent re-entrant slides
+    let countdownMs = settings.secondsPerSlide * 1000;
+    let lastTick = performance.now();
+    let tickTimer = null;
+
+    // REVISION: waiting mode — when timer hits 0 but next slide not ready,
+    // keep timer running and poll readiness every 1s.
+    let waitingForReady = false;
+    let waitingPollTimer = null;
+
+    // -------------------------------
+    // UTILITIES
+    // -------------------------------
+    function deepMerge(target, src) {
+      for (const k of Object.keys(src)) {
+        if (src[k] && typeof src[k] === 'object' && !Array.isArray(src[k])) {
+          target[k] = deepMerge(target[k] || {}, src[k]);
+        } else if (target[k] === undefined) {
+          target[k] = src[k];
+        }
+      }
+      return target;
+    }
+
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function saveSettings() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    }
+
+    function loadSettings() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      let s = raw ? JSON.parse(raw) : {};
+      s = deepMerge(s, DEFAULTS);
+      s.secondsPerSlide = Math.max(0.3, s.secondsPerSlide);
+      s.prefetchCount = clamp(parseInt(s.prefetchCount || 1, 10), 1, 6);
+      s.concurrency = clamp(parseInt(s.concurrency || 2, 10), 1, 3);
+      s.transitionMs = clamp(parseInt(s.transitionMs || 600, 10), 100, 5000);
+      s.maxRetries = clamp(parseInt(s.maxRetries || 3, 10), 0, 10);
+      s.imageTimeoutMs = clamp(parseInt(s.imageTimeoutMs || 12000, 10), 1000, 60000);
+      if (!['contain','cover'].includes(s.objectFit)) s.objectFit = 'contain';
+      return s;
+    }
+
+    function toast(msg = null, ms = 2000) {
+      if (msg) toastEl.innerHTML = msg;
+      toastEl.classList.remove('invisible');
+      requestAnimationFrame(() => {
+        toastEl.classList.remove('opacity-0');
+        toastEl.classList.add('opacity-100');
+      });
+      setTimeout(() => {
+        toastEl.classList.remove('opacity-100');
+        toastEl.classList.add('opacity-0');
+        setTimeout(() => toastEl.classList.add('invisible'), 300);
+      }, ms);
+    }
+
+    function setPlayUI() {
+      const icon = playing ? '⏸' : '▶';
+      btnPlayPause.textContent = icon;
+      btnPlayPause2.textContent = `${icon} Play/Pause`;
+      btnPlayPause3.textContent = 'Play/Pause';
+      hudStatusEl.textContent = playing ? '▶' : '⏸';
+    }
+
+    function updateHUD() {
+      // Display timer; when negative, keep showing 0.0s (timer "keeps running" internally).
+      const shown = Math.max(0, countdownMs) / 1000;
+      hudCountdownEl.textContent = `${shown.toFixed(1)}s`;
+      const target = 1 + settings.prefetchCount;
+      hudQueueEl.textContent = `Q ${queue.length}/${target}`;
+      hudStatusEl.textContent = playing ? '▶' : '⏸';
+      hudState2El.textContent = waitingForReady ? 'waiting… (checking each 1s)' : '';
+    }
+
+    // Build checkbox lists for endpoints
+    function buildEndpointLists() {
+      sfwList.innerHTML = '';
+      nsfwList.innerHTML = '';
+      for (const ep of ENDPOINTS.sfw) {
+        const id = `sfw_${ep}`;
+        const wrap = document.createElement('label');
+        wrap.className = 'flex items-center gap-2';
+        wrap.innerHTML = `
+          <input type="checkbox" id="${id}" data-cat="sfw" data-ep="${ep}" class="accent-white">
+          <span>${ep}</span>
+        `;
+        sfwList.appendChild(wrap);
+      }
+      for (const ep of ENDPOINTS.nsfw) {
+        const id = `nsfw_${ep}`;
+        const wrap = document.createElement('label');
+        wrap.className = 'flex items-center gap-2';
+        wrap.innerHTML = `
+          <input type="checkbox" id="${id}" data-cat="nsfw" data-ep="${ep}" class="accent-white">
+          <span>${ep}</span>
+        `;
+        nsfwList.appendChild(wrap);
+      }
+    }
+
+    function reflectSettingsToUI() {
+      lockSfw.checked = !!settings.lockSfw;
+      catSfw.checked = !!settings.categories.sfw;
+      catNsfw.checked = !!settings.categories.nsfw;
+      secPerSlide.value = settings.secondsPerSlide;
+      prefetchCount.value = settings.prefetchCount;
+      transitionMs.value = settings.transitionMs;
+      objectFit.value = settings.objectFit;
+      showCaption.checked = !!settings.showCaption;
+      pauseOnHover.checked = !!settings.pauseOnHover;
+      concurrency.value = settings.concurrency;
+      maxRetries.value = settings.maxRetries;
+      imageTimeoutMs.value = settings.imageTimeoutMs;
+      autoplay.checked = !!settings.autoplay;
+
+      for (const ep of ENDPOINTS.sfw) {
+        const el = document.getElementById(`sfw_${ep}`);
+        if (el) el.checked = !!(settings.endpoints.sfw && settings.endpoints.sfw[ep]);
+      }
+      for (const ep of ENDPOINTS.nsfw) {
+        const el = document.getElementById(`nsfw_${ep}`);
+        if (el) el.checked = !!(settings.endpoints.nsfw && settings.endpoints.nsfw[ep]);
+      }
+      applyNSFWLockUI();
+    }
+
+    function readSettingsFromUI() {
+      settings.lockSfw = !!lockSfw.checked;
+      settings.categories.sfw = !!catSfw.checked;
+      settings.categories.nsfw = !!catNsfw.checked;
+
+      settings.secondsPerSlide = Math.max(0.3, parseFloat(secPerSlide.value || 5));
+      settings.prefetchCount = clamp(parseInt(prefetchCount.value || 1, 10), 1, 6);
+      settings.transitionMs = clamp(parseInt(transitionMs.value || 600, 10), 100, 5000);
+      settings.objectFit = objectFit.value === 'cover' ? 'cover' : 'contain';
+      settings.showCaption = !!showCaption.checked;
+      settings.pauseOnHover = !!pauseOnHover.checked;
+      settings.concurrency = clamp(parseInt(concurrency.value || 2, 10), 1, 3);
+      settings.maxRetries = clamp(parseInt(maxRetries.value || 3, 10), 0, 10);
+      settings.imageTimeoutMs = clamp(parseInt(imageTimeoutMs.value || 12000, 10), 1000, 60000);
+      settings.autoplay = !!autoplay.checked;
+
+      settings.endpoints.sfw = {};
+      settings.endpoints.nsfw = {};
+      for (const ep of ENDPOINTS.sfw) {
+        const el = document.getElementById(`sfw_${ep}`);
+        if (el?.checked) settings.endpoints.sfw[ep] = true;
+      }
+      for (const ep of ENDPOINTS.nsfw) {
+        const el = document.getElementById(`nsfw_${ep}`);
+        if (el?.checked) settings.endpoints.nsfw[ep] = true;
+      }
+      saveSettings();
+    }
+
+    function applyNSFWLockUI() {
+      const locked = !!lockSfw.checked;
+      catNsfw.disabled = locked;
+      nsfwLockHint.classList.toggle('hidden', !locked);
+      nsfwList.querySelectorAll('input').forEach(i => {
+        i.disabled = locked;
+        if (locked) i.parentElement.classList.add('opacity-50');
+        else i.parentElement.classList.remove('opacity-50');
+      });
+    }
+
+    function getAllowedSources() {
+      let allowedCats = [];
+      if (settings.categories.sfw) allowedCats.push('sfw');
+      if (!settings.lockSfw && settings.categories.nsfw) allowedCats.push('nsfw');
+      if (allowedCats.length === 0) allowedCats = ['sfw'];
+
+      const map = {};
+      for (const cat of ['sfw','nsfw']) {
+        if (!allowedCats.includes(cat)) continue;
+        const selected = Object.keys(settings.endpoints[cat] || {}).filter(k => settings.endpoints[cat][k]);
+        map[cat] = selected.length ? selected : ENDPOINTS[cat].slice();
+      }
+      return { allowedCats, map };
+    }
+
+    function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function pickRandomSource() {
+      const { allowedCats, map } = getAllowedSources();
+      const category = pickRandom(allowedCats);
+      const endpoint = pickRandom(map[category]);
+      return { category, endpoint };
+    }
+
+    // -------------------------------
+    // NETWORKING (Retry + Timeout)
+    // -------------------------------
+    async function fetchJSONWithRetry(url, { timeoutMs, maxRetries }) {
+      let attempt = 0;
+      while (true) {
+        const ac = new AbortController();
+        const timer = setTimeout(() => ac.abort(), timeoutMs);
+        try {
+          const res = await fetch(url, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' },
+            signal: ac.signal
+          });
+          clearTimeout(timer);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          if (!data?.url) throw new Error('Malformed JSON');
+          return data;
+        } catch (err) {
+          clearTimeout(timer);
+          if (attempt >= maxRetries) throw err;
+          const delay = Math.min(2000, 400 * Math.pow(2, attempt)) + Math.random() * 120;
+          await new Promise(r => setTimeout(r, delay));
+          attempt++;
+        }
+      }
+    }
+
+    function preloadImage(url, timeoutMs) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.decoding = 'async';
+        img.loading = 'eager';
+        img.referrerPolicy = 'no-referrer';
+
+        const t = setTimeout(() => { cleanup(); reject(new Error('Image load timeout')); }, timeoutMs);
+        function cleanup() { img.onload = null; img.onerror = null; clearTimeout(t); }
+        img.onload = () => { cleanup(); resolve(img); };
+        img.onerror = () => { cleanup(); reject(new Error('Image load error')); };
+        img.src = url;
+      });
+    }
+
+    async function makeSlide(currentSession) {
+      const { category, endpoint } = pickRandomSource();
+      const data = await fetchJSONWithRetry(
+        `https://api.waifu.pics/${category}/${endpoint}`,
+        { timeoutMs: Math.max(5000, Math.min(15000, settings.imageTimeoutMs)), maxRetries: settings.maxRetries }
+      );
+      const img = await preloadImage(data.url, settings.imageTimeoutMs);
+      if (currentSession !== sessionId) throw new Error('Stale session');
+      return { category, endpoint, url: data.url, img };
+    }
+
+    // -------------------------------
+    // PREFETCH ENGINE
+    // -------------------------------
+    function targetQueueLength() { return 1 + settings.prefetchCount; }
+
+    async function pumpPrefetch() {
+      const currentSession = sessionId;
+      const target = targetQueueLength();
+      while (inFlight < settings.concurrency && (queue.length + inFlight) < target) {
+        inFlight++;
+        makeSlide(currentSession)
+          .then(slide => {
+            if (currentSession === sessionId) {
+              queue.push(slide);
+              if (!initialized && queue.length >= 2) {
+                initialized = true;
+                renderInitial();
+              }
+              // NOTE: in "waiting" mode we do NOT immediately slide here; the 1s poll handles it.
+            }
+          })
+          .catch(() => { /* ignore stale/failed */ })
+          .finally(() => {
+            inFlight = Math.max(0, inFlight - 1);
+            if (currentSession === sessionId) {
+              if ((queue.length + inFlight) < target) setTimeout(pumpPrefetch, 0);
+            }
+          });
+      }
+    }
+
+    // -------------------------------
+    // RENDERING & SLIDE LIFECYCLE
+    // -------------------------------
+    function imgClassByFit() { return settings.objectFit === 'cover' ? 'object-cover' : 'object-contain'; }
+
+    function buildSlideElement(slide) {
+      const holder = document.createElement('div');
+      holder.className = 'w-full h-full flex items-center justify-center bg-black shrink-0';
+      const img = document.createElement('img');
+      img.src = slide.url;
+      img.alt = `${slide.category}/${slide.endpoint}`;
+      img.className = `w-full h-full ${imgClassByFit()} select-none pointer-events-none`;
+      img.setAttribute('referrerpolicy', 'no-referrer');
+      holder.appendChild(img);
+      return holder;
+    }
+
+    function renderInitial() {
+      trackEl.style.transitionDuration = '0ms';
+      trackEl.style.transform = 'translateX(0)';
+      trackEl.innerHTML = '';
+      const first = queue[0];
+      const second = queue[1];
+      trackEl.appendChild(buildSlideElement(first));
+      trackEl.appendChild(buildSlideElement(second));
+      setCaptionFor(first);
+      bootEl.classList.add('hidden');
+      updateTrackTransition();
+      updateHUD();
+      if (settings.autoplay) startTick();
+      pumpPrefetch();
+    }
+
+    function updateTrackTransition() { trackEl.style.transitionDuration = `${settings.transitionMs}ms`; }
+
+    function setCaptionFor(slide) {
+      if (!settings.showCaption) { captionEl.classList.add('hidden'); return; }
+      captionEl.classList.remove('hidden');
+      captionEl.textContent = `${slide.category}/${slide.endpoint} • ${slide.url}`;
+    }
+
+    function canSlide() { return !sliding && queue.length >= 2; }
+
+    function rebuildDOMAfterShift() {
+      trackEl.style.transitionDuration = '0ms';
+      trackEl.style.transform = 'translateX(0)';
+      trackEl.innerHTML = '';
+      const first = queue[0];
+      const second = queue[1];
+      if (first) trackEl.appendChild(buildSlideElement(first));
+      if (second) trackEl.appendChild(buildSlideElement(second));
+      setCaptionFor(first);
+      updateTrackTransition();
+      pumpPrefetch();
+    }
+
+    function slideToNext() {
+      if (!canSlide()) return;
+      sliding = true;
+      trackEl.style.transitionDuration = `${settings.transitionMs}ms`;
+      trackEl.style.transform = 'translateX(-100%)';
+      const onDone = () => {
+        trackEl.removeEventListener('transitionend', onDone);
+        queue.shift();
+        sliding = false;
+        rebuildDOMAfterShift();
+        // Reset countdown AFTER slide; waiting mode cleared.
+        countdownMs = settings.secondsPerSlide * 1000;
+        waitingForReady = false;
+        stopWaitingPoll();
+        updateHUD();
+      };
+      trackEl.addEventListener('transitionend', onDone, { once: true });
+    }
+
+    // -------------------------------
+    // WAITING MODE (REVISION)
+    // -------------------------------
+    function startWaitingPoll() {
+      if (waitingPollTimer) return;
+      waitingPollTimer = setInterval(() => {
+        if (canSlide()) {
+          slideToNext(); // slide immediately once next is ready (no extra delay)
+        } else {
+          updateHUD();
+        }
+      }, 1000); // check every 1s
+    }
+
+    function stopWaitingPoll() {
+      if (waitingPollTimer) clearInterval(waitingPollTimer);
+      waitingPollTimer = null;
+    }
+
+    // -------------------------------
+    // AUTOPLAY TICK
+    // -------------------------------
+    function startTick() {
+      stopTick();
+      lastTick = performance.now();
+      tickTimer = setInterval(tick, 100);
+      playing = true;
+      setPlayUI();
+      updateHUD();
+    }
+
+    function stopTick() {
+      if (tickTimer) clearInterval(tickTimer);
+      tickTimer = null;
+      playing = false;
+      setPlayUI();
+      updateHUD();
+    }
+
+    function tick() {
+      if (!initialized) return;
+
+      const now = performance.now();
+      const dt = now - lastTick;
+      lastTick = now;
+
+      const paused = !playing || (settings.pauseOnHover && pausedByHover) || sliding;
+      // IMPORTANT (REVISION): Timer keeps running regardless of image readiness.
+      if (!paused) {
+        countdownMs -= dt;
+      }
+      // When countdown passes zero, enter waiting mode until next is ready.
+      if (countdownMs <= 0 && !waitingForReady) {
+        if (canSlide()) {
+          slideToNext();
+        } else {
+          waitingForReady = true;
+          startWaitingPoll();
+        }
+      }
+      updateHUD();
+    }
+
+    // -------------------------------
+    // EVENT HANDLERS
+    // -------------------------------
+    function toggleSettings(open = null) {
+      const isOpen = !overlayEl.classList.contains('hidden');
+      const wantOpen = open === null ? !isOpen : !!open;
+      overlayEl.classList.toggle('hidden', !wantOpen);
+      panelEl.setAttribute('aria-hidden', String(!wantOpen));
+      btnSettings.setAttribute('aria-expanded', String(wantOpen));
+      panelEl.style.transform = wantOpen ? 'translateX(0)' : 'translateX(100%)';
+    }
+
+    function togglePlayPause() {
+      if (!initialized) return;
+      if (playing) stopTick(); else startTick();
+    }
+
+    function maybeNext() {
+      if (canSlide()) {
+        slideToNext();
+        if (!playing) updateHUD();
+      } else {
+        toast('Next not ready yet (prefetching)…', 1400);
+      }
+    }
+
+    // Pause on hover (optional)
+    appEl.addEventListener('mouseenter', () => { if (settings.pauseOnHover) pausedByHover = true; });
+    appEl.addEventListener('mouseleave', () => { pausedByHover = false; });
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        togglePlayPause();
+      } else if (e.key === 'F' || e.key === 'f') {
+        toggleSettings();
+      } else if (e.key === 'ArrowRight') {
+        maybeNext();
+      } else if (e.key === '?') {
+        toast();
+      }
+    });
+
+    // Buttons
+    btnSettings.addEventListener('click', () => toggleSettings(true));
+    btnCloseSettings.addEventListener('click', () => toggleSettings(false));
+    btnPlayPause.addEventListener('click', togglePlayPause);
+    btnPlayPause2.addEventListener('click', togglePlayPause);
+    btnPlayPause3.addEventListener('click', togglePlayPause);
+    btnNext.addEventListener('click', maybeNext);
+
+    // Settings interactions
+    lockSfw.addEventListener('change', () => {
+      applyNSFWLockUI();
+      if (lockSfw.checked) catNsfw.checked = false;
+    });
+
+    // Select all / none helpers
+    sfwAll.addEventListener('click', () => ENDPOINTS.sfw.forEach(ep => (document.getElementById(`sfw_${ep}`).checked = true)));
+    sfwNone.addEventListener('click', () => ENDPOINTS.sfw.forEach(ep => (document.getElementById(`sfw_${ep}`).checked = false)));
+    nsfwAll.addEventListener('click', () => ENDPOINTS.nsfw.forEach(ep => (document.getElementById(`nsfw_${ep}`).checked = true)));
+    nsfwNone.addEventListener('click', () => ENDPOINTS.nsfw.forEach(ep => (document.getElementById(`nsfw_${ep}`).checked = false)));
+
+    // Apply & rebuild
+    btnApply.addEventListener('click', async () => {
+      readSettingsFromUI();
+      // Rebuild queue: stop timers, invalidate session, clear DOM and queue
+      stopTick();
+      stopWaitingPoll();
+      waitingForReady = false;
+      sessionId++;
+      queue.splice(0, queue.length);
+      inFlight = 0;
+      sliding = false;
+      initialized = false;
+      countdownMs = settings.secondsPerSlide * 1000;
+      updateTrackTransition();
+      trackEl.innerHTML = '';
+      bootEl.classList.remove('hidden');
+      setPlayUI();
+      updateHUD();
+      pumpPrefetch();
+      toggleSettings(false);
+    });
+
+    // Import / Export
+    btnExportFile.addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'waifu-viewer-settings.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    fileImport.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const obj = JSON.parse(text);
+        importSettings(obj);
+      } catch {
+        toast('Invalid JSON file', 1600);
+      } finally {
+        fileImport.value = '';
+      }
+    });
+
+    btnCopy.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(settings, null, 2));
+        toast('Settings copied to clipboard!', 1200);
+      } catch {
+        toast('Clipboard failed', 1200);
+      }
+    });
+
+    btnReset.addEventListener('click', () => { importSettings(DEFAULTS); });
+
+    btnLoadText.addEventListener('click', () => {
+      const txt = jsonText.value.trim();
+      if (!txt) return;
+      try {
+        const obj = JSON.parse(txt);
+        importSettings(obj);
+      } catch {
+        toast('Invalid JSON text', 1600);
+      }
+    });
+
+    function importSettings(obj) {
+      const merged = deepMerge(JSON.parse(JSON.stringify(obj)), DEFAULTS);
+      settings = merged;
+      saveSettings();
+      reflectSettingsToUI();
+      btnApply.click();
+      toast('Settings imported & applied', 1400);
+    }
+
+    // -------------------------------
+    // INIT
+    // -------------------------------
+    function initUI() {
+      buildEndpointLists();
+      reflectSettingsToUI();
+      setPlayUI();
+      updateHUD();
+    }
+
+    function initApp() {
+      updateTrackTransition();
+      pumpPrefetch();
+    }
+
+    // START
+    initUI();
+    initApp();
+  </script>
+
+  <!--
+    IMPLEMENTATION NOTES
+
+    REVISION REQUESTED:
+      - When the cooldown timer reaches 0, we DO NOT "pause the timer" to wait for the next image.
+      - Instead, the timer keeps running internally; the HUD clamps at 0.0s for display.
+      - If next slide isn't ready at 0s, we enter "waiting mode":
+          * HUD (second line) shows "waiting… (checking each 1s)".
+          * A poll runs every 1000ms to check if queue[1] is ready.
+          * As soon as it's ready, we slide immediately (no extra delay), then reset the cooldown.
+      - Manual "Next" still advances only if next is ready.
+
+    Prefetch Queue:
+      - queue[0] = CURRENT on-screen slide.
+      - queue[1] = NEXT slide (must be fully loaded before any slide).
+      - queue[2..N] = optional buffer based on Prefetch Count.
+
+    Boot:
+      - App waits for TWO loaded slides, then renders, ensuring first transition never lands on a blank.
+
+    Networking:
+      - API fetch uses AbortController timeout + retry with exponential backoff (maxRetries).
+      - Image preloading uses a separate timeout; slides only enter queue after onload.
+
+    Sliding Lifecycle:
+      - On slide end, drop leftmost, rebuild DOM for [current,next], prefetch to refill, reset cooldown.
+  -->
+</body>
+</html>
