@@ -8,5 +8,10 @@
     "directory": "./app/DemoBerita/",
     "title": "Demo Berita",
     "description": "Berita demo untuk tugas Crazy Eight di Desain UIUX"
+  },
+  {
+    "directory": "./app/CanvaCrash/",
+    "title": "Canva Crash",
+    "description": "Tampilan Canva Crash seperti apa"
   }
 ]
