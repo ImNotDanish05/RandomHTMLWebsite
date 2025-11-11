@@ -18,5 +18,10 @@
     "directory": "./app/AnimeScroll/",
     "title": "Anime Scroll",
     "description": "Deep Scrolling Anime until u tired xD"
+  },
+  {
+    "directory": "./app/AEGIS",
+    "title": "AEGIS Mockup",
+    "description": "Aplikasi yang bisa mendeteksi serangan pada aplikasi UMKM"
   }
 ]
