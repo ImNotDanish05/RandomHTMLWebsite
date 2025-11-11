@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AEGIS Admin — Monitoring & Respons</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="admin.css" />
+  <script defer src="admin.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Lewati ke konten admin</a>
+  <header class="site-header scrolled">
+    <nav class="nav container">
+      <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="24" height="24" aria-hidden="true"><span>AEGIS Admin</span></a>
+      <ul class="navmenu" style="display:none"></ul>
+      <div class="nav-cta">
+        <label class="role-switch" aria-label="Pilih peran">
+          Masuk sebagai:
+          <select id="roleSelect" aria-label="Role aktif">
+            <option>Owner</option>
+            <option>Admin</option>
+            <option>Staf</option>
+            <option>Auditor</option>
+            <option>ReadOnly</option>
+          </select>
+        </label>
+        <a class="btn btn-soft" href="index.html">← Landing</a>
+        <span class="badge-wrap">Insiden: <span id="incBadge">0</span></span>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main" class="admin-main container">
+    <!-- OVERVIEW -->
+    <section id="overview" class="admin-section">
+      <h2>Overview</h2>
+      <div class="admin-grid-4">
+        <div class="kpi">
+          <div class="kpi-title">Skor Ancaman Global</div>
+          <div class="kpi-value" id="kpiThreat">0</div>
+          <div class="mini-bar" aria-hidden="true"><span id="barThreat" style="--v:0%"></span></div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-title">Anomali 24 jam</div>
+          <div class="kpi-value" id="kpiAnom">0</div>
+          <div class="mini-bar" aria-hidden="true"><span id="barAnom" style="--v:0%"></span></div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-title">Insiden Aktif</div>
+          <div class="kpi-value" id="kpiInc">0</div>
+          <div class="mini-bar" aria-hidden="true"><span id="barInc" style="--v:0%"></span></div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-title">Konektor Online</div>
+          <div class="kpi-value" id="kpiConn">0</div>
+          <div class="mini-bar" aria-hidden="true"><span id="barConn" style="--v:0%"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ATTACK SIMULATOR -->
+    <section id="simulator" class="admin-section">
+      <div class="sim-head">
+        <h2>Simulasi Serangan</h2>
+        <div class="row">
+          <button class="btn btn-outline" id="seedBtn">Muat Data Contoh</button>
+          <button class="btn btn-soft" id="theaterBtn">Theater Mode</button>
+          <span class="hint">Shortcut: tekan <b>.</b> untuk spawn event acak</span>
+        </div>
+      </div>
+      <div class="sim-grid">
+        <article class="sim-card">
+          <h3>A) Phishing → Impossible Travel → Privileged Action</h3>
+          <p>Deteksi perjalanan mustahil, auto lock + MFA.</p>
+          <button class="btn btn-primary" data-run="A">Jalankan</button>
+        </article>
+        <article class="sim-card">
+          <h3>B) Invoice Fraud → Pemblokiran Otomatis</h3>
+          <p>Perubahan rekening terdeteksi kritikal.</p>
+          <button class="btn btn-primary" data-run="B">Jalankan</button>
+        </article>
+        <article class="sim-card">
+          <h3>C) Brute Force → Lock Account + Force MFA</h3>
+          <p>≥5 gagal login / 2 menit dari IP baru.</p>
+          <button class="btn btn-primary" data-run="C">Jalankan</button>
+        </article>
+        <article class="sim-card">
+          <h3>D) Token Theft → Revoke Tokens + Quarantine</h3>
+          <p>Penggunaan API key dari perangkat tidak dikenal.</p>
+          <button class="btn btn-primary" data-run="D">Jalankan</button>
+        </article>
+      </div>
+
+      <div id="attackBanner" class="attack-banner" hidden>
+        <div class="row">
+          <span>🚨 Percobaan peretasan terdeteksi</span>
+          <div class="row">
+            <button class="btn btn-danger" data-action="panic">Panic Button</button>
+            <button class="btn btn-soft" data-action="lock">Lock Account</button>
+            <button class="btn btn-soft" data-action="mfa">Force 2FA</button>
+            <button class="btn btn-soft" data-action="revoke">Revoke Tokens</button>
+            <button class="btn btn-outline" data-action="open-inc">Buka Incident</button>
+          </div>
+        </div>
+        <div id="lockdownTimer" class="timer" hidden></div>
+      </div>
+    </section>
+
+    <!-- LIVE FEED -->
+    <section id="live" class="admin-section">
+      <div class="head-row">
+        <h2>Live Feed</h2>
+        <div class="filters">
+          <button class="chip active" data-filter="all">Semua</button>
+          <button class="chip" data-filter="login">Login</button>
+          <button class="chip" data-filter="invoice">Invoice</button>
+          <button class="chip" data-filter="email">Email</button>
+          <button class="chip" data-filter="priv">Privileged</button>
+          <button class="chip" data-filter="integration">Integration</button>
+        </div>
+      </div>
+      <div id="feed" class="feed" role="table" aria-label="Aliran event"></div>
+    </section>
+
+    <!-- INCIDENTS -->
+    <section id="incidents" class="admin-section">
+      <h2>Incidents</h2>
+      <div id="incList" class="inc-list"></div>
+    </section>
+
+    <!-- USERS & DEVICES -->
+    <section id="users" class="admin-section">
+      <h2>Users & Devices</h2>
+      <div id="userList" class="user-list"></div>
+    </section>
+
+    <!-- POLICIES & RULES -->
+    <section id="policies" class="admin-section">
+      <h2>Policies & Rules</h2>
+      <div class="grid-2">
+        <div>
+          <h3>Checklist Kebijakan</h3>
+          <label><input type="checkbox" id="pol_mfa_admin"> Wajib 2FA untuk role Admin</label><br/>
+          <label><input type="checkbox" id="pol_impossible"> Blok “Impossible Travel”</label><br/>
+          <label><input type="checkbox" id="pol_rate"> Rate limit login gagal</label><br/>
+          <label><input type="checkbox" id="pol_invoice"> Cek perubahan rekening invoice</label><br/>
+          <label><input type="checkbox" id="pol_homoglyph"> Blok domain e-mail ‘mirip’ (homoglyph)</label><br/>
+          <button class="btn btn-primary" id="savePolicies">Simpan Kebijakan</button>
+          <div id="policyWarning" class="warning" hidden>⚠️ Perubahan kebijakan berisiko (Policy Drift Guard)</div>
+        </div>
+        <div>
+          <h3>Editor Rules (JSON DSL)</h3>
+          <textarea id="rulesEditor" rows="12" spellcheck="false" aria-label="Editor rules JSON"></textarea>
+          <div class="row" style="margin-top:.5rem">
+            <button class="btn btn-soft" id="formatRules">Format</button>
+            <button class="btn btn-primary" id="saveRules">Simpan Rules</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONNECTORS -->
+    <section id="connectors" class="admin-section">
+      <h2>Connectors</h2>
+      <div id="connGrid" class="conn-grid"></div>
+      <div class="webhook">
+        <h3>Webhook Kustom (Mock)</h3>
+        <label>URL <input type="url" id="whUrl" placeholder="https://example.com/webhook"></label>
+        <label>Secret <input type="text" id="whSecret" placeholder="supersecret"></label>
+        <div class="row">
+          <button class="btn btn-soft" id="saveWebhook">Simpan Endpoint</button>
+          <button class="btn btn-primary" id="sendWebhook">Kirim Webhook Tes</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLAYBOOKS -->
+    <section id="playbooks" class="admin-section">
+      <h2>Playbooks (SOAR)</h2>
+      <div id="pbList" class="pb-list"></div>
+    </section>
+
+    <!-- AUDIT & LOGS -->
+    <section id="audit" class="admin-section">
+      <h2>Audit & Logs</h2>
+      <div class="row">
+        <button class="btn btn-soft" id="exportLogJson">Export JSON</button>
+        <button class="btn btn-soft" id="exportLogCsv">Export CSV</button>
+      </div>
+      <div id="auditList" class="audit-list"></div>
+    </section>
+
+    <!-- REPORTS -->
+    <section id="reports" class="admin-section">
+      <h2>Reports</h2>
+      <div class="row">
+        <label>Periode
+          <select id="reportPeriod">
+            <option value="weekly">Mingguan</option>
+            <option value="monthly">Bulanan</option>
+          </select>
+        </label>
+        <button class="btn btn-primary" id="downloadReport">Unduh PDF (Print)</button>
+      </div>
+      <div id="reportPreview" class="report"></div>
+    </section>
+
+    <!-- Hidden spec -->
+    <section id="spec-admin" hidden>
+      <h3>How to Demo</h3>
+      <ol>
+        <li>Klik “Muat Data Contoh”.</li>
+        <li>Buka “Simulasi Serangan” dan jalankan salah satu skenario.</li>
+        <li>Lihat Live Feed, Incidents, lalu buka detail incident.</li>
+        <li>Tekan Panic Button di banner untuk lockdown 15 menit (mock).</li>
+        <li>Ubah Policies & Rules, Simpan → lihat notifikasi & Policy Drift Guard.</li>
+        <li>Buka Connectors → “SDK (Mock)” untuk snippet & “Kirim Webhook Tes”.</li>
+        <li>Export Audit ke JSON/CSV, Unduh report print.</li>
+        <li>Role ada di kanan atas. Owner/Admin punya akses penuh.</li>
+      </ol>
+      <p>Keyboard: tekan <kbd>.</kbd> untuk spawn event acak.</p>
+    </section>
+  </main>
+
+  <!-- Modals -->
+  <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog">
+      <header class="modal-header">
+        <h3 id="modalTitle">Modal</h3>
+        <button class="iconbtn" data-close aria-label="Tutup modal">&times;</button>
+      </header>
+      <div id="modalBody" class="modal-body"></div>
+      <footer class="modal-footer">
+        <button class="btn btn-soft" data-close>Tutup</button>
+      </footer>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Side Panel: Profil Pengguna -->
+  <aside id="sidePanel" class="side-panel" aria-hidden="true" aria-label="Profil Pengguna" tabindex="-1">
+    <div class="sp-header">
+      <strong>Profil Pengguna</strong>
+      <button class="iconbtn" id="spClose" aria-label="Tutup panel">&times;</button>
+    </div>
+    <div id="spBody" class="sp-body"></div>
+  </aside>
+  <div id="spBackdrop" class="sp-backdrop" hidden></div>
+
+<div id="popoverRoot" class="popover-root" aria-hidden="true"></div>
+</body>
+</html>

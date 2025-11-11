@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AEGIS — Bodyguard Digital UMKM</title>
+  <meta name="description" content="AEGIS membantu UMKM mencegah penipuan, phishing, dan ransomware. Aman, mudah, terjangkau." />
+  <link rel="preload" href="styles.css" as="style">
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Lewati ke konten utama</a>
+
+  <!-- NAVBAR -->
+  <header id="top" class="site-header" aria-label="Navigasi utama">
+    <nav class="nav container" aria-label="Primary">
+      <a class="brand" href="#top" aria-label="Beranda AEGIS">
+        <img src="assets/logo.svg" alt="" width="28" height="28" aria-hidden="true">
+        <span aria-hidden="false">AEGIS</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="navmenu" aria-label="Buka menu">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <ul id="navmenu" class="navmenu" role="menubar">
+        <li role="none"><a role="menuitem" href="#tentang" data-nav>● Tentang</a></li>
+        <li role="none"><a role="menuitem" href="#masalah" data-nav>● Masalah</a></li>
+        <li role="none"><a role="menuitem" href="#carakerja" data-nav>● Cara Kerja</a></li>
+        <li role="none"><a role="menuitem" href="#fitur" data-nav>● Fitur</a></li>
+        <li role="none"><a role="menuitem" href="#teknologi" data-nav>● Teknologi</a></li>
+        <li role="none"><a role="menuitem" href="#harga" data-nav>● Harga</a></li>
+        <li role="none"><a role="menuitem" href="#kasus" data-nav>● Kasus</a></li>
+        <li role="none"><a role="menuitem" href="#roadmap" data-nav>● Roadmap</a></li>
+        <li role="none"><a role="menuitem" href="#dampak" data-nav>● Dampak</a></li>
+        <li role="none"><a role="menuitem" href="#mitra" data-nav>● Mitra</a></li>
+        <li role="none"><a role="menuitem" href="#faq" data-nav>● FAQ</a></li>
+        <li role="none"><a role="menuitem" href="#kontak" data-nav>● Kontak</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a class="btn btn-soft" id="adminLink" href="admin.html" aria-label="Buka halaman admin">Admin <span id="inc-badge" class="inc-badge" aria-label="Insiden terbuka" title="Insiden terbuka" style="margin-left:.4rem">0</span></a>
+
+        <button class="btn btn-outline" data-open-modal aria-label="Coba demo">Coba Demo</button>
+        <a class="btn btn-primary" href="#kontak">Hubungi Kami</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section id="hero" class="hero">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <h1>AEGIS — Bodyguard Digital untuk UMKM</h1>
+          <p class="subtitle">Cegah penipuan, phishing, ransomware. Aman, mudah, terjangkau.</p>
+          <div class="actions">
+            <button class="btn btn-primary" data-open-modal aria-label="Buka Modal Demo Scan">Coba Demo Scan</button>
+            <a class="btn btn-outline" href="#fitur">Lihat Fitur</a>
+          </div>
+          <div class="score-card" aria-label="Skor Keamanan">
+            <div class="ring" role="img" aria-label="Skor keamanan 85 dari 100">
+              <svg viewBox="0 0 120 120" width="80" height="80" aria-hidden="true">
+                <circle class="ring-bg" cx="60" cy="60" r="52"/>
+                <circle class="ring-fg" cx="60" cy="60" r="52" style="--pct:85"/>
+              </svg>
+              <div class="ring-label">
+                <strong>85</strong><span>/100</span>
+              </div>
+            </div>
+            <div class="status">
+              <span class="dot dot-ok" aria-hidden="true"></span> <span class="sr-only">Status:</span> <b>🟢 Aman</b>
+            </div>
+          </div>
+        </div>
+        <div class="hero-illustration" aria-hidden="true">
+          <img loading="lazy" src="assets/shield.svg" alt="" width="220" height="220">
+          <img loading="lazy" src="assets/chain.svg" alt="" class="ill-float">
+        </div>
+      </div>
+    </section>
+
+    <!-- TENTANG -->
+    <section id="tentang" class="section">
+      <div class="container grid-2">
+        <div>
+          <h2>Apa itu AEGIS?</h2>
+          <p><b>AEGIS</b> adalah “bodyguard digital” untuk UMKM Indonesia. Kami melindungi bisnis dari penipuan online, phishing, dan serangan siber lain dengan teknologi canggih yang <em>mudah dipakai</em> dan <em>harga bersahabat</em>.</p>
+          <ul class="check">
+            <li>Proteksi aktif: email, invoice, akun, dan data</li>
+            <li>Setup singkat, tanpa install; cukup ponsel & internet</li>
+          </ul>
+        </div>
+        <div class="illus-box" aria-hidden="true">
+          <img loading="lazy" src="assets/network-shield.svg" alt="" width="440" height="300">
+        </div>
+      </div>
+    </section>
+
+    <!-- MASALAH -->
+    <section id="masalah" class="section">
+      <div class="container">
+        <h2>Masalah yang Dipecahkan</h2>
+        <div class="grid-2 cards">
+          <article class="card">
+            <div class="icon"><img src="assets/invoice.svg" alt="" aria-hidden="true"></div>
+            <h3>Penipuan Invoice</h3>
+            <ul>
+              <li>Invoice mirip asli, nomor rekening diubah</li>
+              <li>Contoh: supplier asli BCA 123 → penipu BCA 124</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="icon"><img src="assets/mail.svg" alt="" aria-hidden="true"></div>
+            <h3>Phishing Email</h3>
+            <ul>
+              <li>Klik link palsu (Shopee, Bank, dst.)</li>
+              <li>Akun toko direbut, data bocor (47% UMKM pernah kena)</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="icon"><img src="assets/lock.svg" alt="" aria-hidden="true"></div>
+            <h3>Ransomware</h3>
+            <ul>
+              <li>Data dikunci, tebusan mahal</li>
+              <li>Operasional lumpuh 3–7 hari</li>
+            </ul>
+          </article>
+          <article class="card">
+            <div class="icon"><img src="assets/cloud.svg" alt="" aria-hidden="true"></div>
+            <h3>Biaya Keamanan Mahal</h3>
+            <ul>
+              <li>Solusi enterprise 50–500 jt/tahun</li>
+              <li>UMKM mampu 1–5 jt/tahun, sering tanpa perlindungan</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARA KERJA (TABS) -->
+    <section id="carakerja" class="section">
+      <div class="container">
+        <h2>Cara Kerja AEGIS</h2>
+        <div class="tabs" role="tablist" aria-label="Cara kerja">
+          <button class="tab active" role="tab" aria-selected="true" aria-controls="tab-prevent" id="tabbtn-prevent">Pencegahan</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="tab-detect" id="tabbtn-detect">Deteksi Dini</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="tab-respond" id="tabbtn-respond">Respons Cepat</button>
+        </div>
+        <div class="tab-panels">
+          <div id="tab-prevent" class="tab-panel active" role="tabpanel" aria-labelledby="tabbtn-prevent">
+            <ul class="bullets">
+              <li>Scan Email Otomatis</li>
+              <li>Cek Invoice 5 detik (foto → verifikasi)</li>
+              <li>Monitor Akun & alert login mencurigakan</li>
+            </ul>
+          </div>
+          <div id="tab-detect" class="tab-panel" role="tabpanel" aria-labelledby="tabbtn-detect">
+            <ul class="bullets">
+              <li>AI belajar pola serangan baru</li>
+              <li>Behavior analysis</li>
+              <li>Threat intelligence global</li>
+            </ul>
+          </div>
+          <div id="tab-respond" class="tab-panel" role="tabpanel" aria-labelledby="tabbtn-respond">
+            <ul class="bullets">
+              <li>Auto-block serangan</li>
+              <li>System lockdown sementara</li>
+              <li>Backup otomatis</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FITUR (MOCKUP PONSEL) -->
+    <section id="fitur" class="section">
+      <div class="container">
+        <h2>Fitur Utama untuk UMKM</h2>
+        <div class="phone-wrap" aria-label="Mockup aplikasi ponsel">
+          <div class="phone">
+            <div class="phone-header">🛡️ AEGIS GUARD</div>
+            <div class="phone-body">
+              <p><b>Skor Keamanan:</b> 85/100 <span aria-hidden="true">[🟢]</span></p>
+              <p>📧 <b>Email:</b> ✅ 0 ancaman</p>
+              <p>💸 <b>Invoice:</b> ✅ 0 ancaman</p>
+              <p>🔐 <b>Sistem:</b> ✅ Aman</p>
+              <div class="phone-actions">
+                <button class="btn btn-primary" data-open-modal aria-label="Buka modal scan">🔍 Scan Sekarang</button>
+                <div class="row">
+                  <button class="btn btn-soft">📊 Laporan</button>
+                  <button class="btn btn-soft">🆘 Bantuan</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEKNOLOGI -->
+    <section id="teknologi" class="section">
+      <div class="container">
+        <h2>Teknologi di Balik Layar</h2>
+        <div class="grid-3 cards">
+          <article class="card">
+            <div class="icon"><img src="assets/ai.svg" alt="" aria-hidden="true"></div>
+            <h3>AI</h3>
+            <p>Bahasa Indonesia, modus lokal, terus belajar dari pola serangan.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><img src="assets/chain.svg" alt="" aria-hidden="true"></div>
+            <h3>Blockchain</h3>
+            <p>Cap digital tidak bisa dipalsu; bukti kuat untuk ranah hukum.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><img src="assets/cloud.svg" alt="" aria-hidden="true"></div>
+            <h3>Cloud</h3>
+            <p>Tanpa install; cukup hp + internet; enkripsi di sisi server.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- KEUNGGULAN -->
+    <section id="keunggulan" class="section">
+      <div class="container">
+        <h2>Keunggulan</h2>
+        <div class="grid-4 cards">
+          <article class="card small">
+            <h3>Terjangkau</h3>
+            <ul class="bullets">
+              <li>50rb–500rb/bulan</li>
+            </ul>
+          </article>
+          <article class="card small">
+            <h3>Mudah Dipakai</h3>
+            <ul class="bullets">
+              <li>Rasa aplikasi Gojek/Grab</li>
+            </ul>
+          </article>
+          <article class="card small">
+            <h3>Komprehensif</h3>
+            <ul class="bullets">
+              <li>Email, invoice, akun, data</li>
+              <li>Integrasi Tokopedia/Shopee/bank</li>
+            </ul>
+          </article>
+          <article class="card small">
+            <h3>Cerdas</h3>
+            <ul class="bullets">
+              <li>Prediksi serangan</li>
+              <li>Database ancaman update</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- KASUS NYATA -->
+    <section id="kasus" class="section">
+      <div class="container">
+        <h2>Contoh Kasus Nyata</h2>
+        <div class="cases">
+          <div class="case before">
+            <h3>❌ Sebelum</h3>
+            <p>Invoice palsu, rekening tidak cocok, uang hilang.</p>
+          </div>
+          <div class="case after">
+            <h3>✅ Dengan AEGIS</h3>
+            <p>Verifikasi otomatis, rekening tervalidasi, transaksi aman.</p>
+          </div>
+        </div>
+        <div class="cases">
+          <div class="case before">
+            <h3>❌ Sebelum</h3>
+            <p>Akun marketplace direbut, reputasi turun.</p>
+          </div>
+          <div class="case after">
+            <h3>✅ Dengan AEGIS</h3>
+            <p>Deteksi login mencurigakan & blokir cepat, akun aman.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HARGA -->
+    <section id="harga" class="section">
+      <div class="container">
+        <h2>Harga & Paket</h2>
+        <div class="pricing">
+          <article class="price">
+            <h3>Basic</h3>
+            <div class="tag">Rp 50.000/bulan</div>
+            <ul>
+              <li>Scan email & invoice</li>
+              <li>Proteksi dasar</li>
+              <li>Laporan sederhana</li>
+            </ul>
+            <button class="btn btn-outline">Mulai Gratis 14 Hari</button>
+          </article>
+          <article class="price highlight">
+            <h3>Professional</h3>
+            <div class="tag">Rp 200.000/bulan</div>
+            <ul>
+              <li>Semua Basic</li>
+              <li>Integrasi e-commerce</li>
+              <li>Laporan detail</li>
+              <li>Support prioritas</li>
+            </ul>
+            <button class="btn btn-primary">Mulai Gratis 14 Hari</button>
+          </article>
+          <article class="price">
+            <h3>Enterprise</h3>
+            <div class="tag">Rp 500.000/bulan</div>
+            <ul>
+              <li>Semua Pro</li>
+              <li>Pelacakan penyerang</li>
+              <li>Support 24/7</li>
+              <li>Bantuan hukum</li>
+            </ul>
+            <button class="btn btn-outline">Mulai Gratis 14 Hari</button>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section id="roadmap" class="section">
+      <div class="container">
+        <h2>Roadmap</h2>
+        <ol class="timeline" aria-label="Roadmap AEGIS">
+          <li>
+            <h4>2024–2026</h4>
+            <p>Pilot 1.000 UMKM (Jawa & Bali)</p>
+          </li>
+          <li>
+            <h4>2027–2030</h4>
+            <p>Ekspansi nasional, integrasi luas, AI makin cerdas</p>
+          </li>
+          <li>
+            <h4>2031–2045</h4>
+            <p>Standar keamanan UMKM; ekosistem aman</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- DAMPAK -->
+    <section id="dampak" class="section">
+      <div class="container">
+        <h2>Dampak untuk UMKM</h2>
+        <div class="grid-3">
+          <div class="metric">
+            <div class="num" data-count="90">0</div>
+            <div class="label">Cegah penipuan</div>
+            <div class="mini-chart" aria-hidden="true"><span style="--v:90%"></span></div>
+          </div>
+          <div class="metric">
+            <div class="num" data-count="5">0</div>
+            <div class="label">Respons 2–5 detik</div>
+            <div class="mini-chart" aria-hidden="true"><span style="--v:80%"></span></div>
+          </div>
+          <div class="metric">
+            <div class="num" data-count="187">0</div>
+            <div class="label">Rata-rata rugi dicegah (juta/bulan)</div>
+            <div class="mini-chart" aria-hidden="true"><span style="--v:70%"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MITRA -->
+    <section id="mitra" class="section">
+      <div class="container">
+        <h2>Mitra & Dukungan</h2>
+        <div class="logos" aria-label="Deretan logo mitra (placeholder)">
+          <img src="assets/logo.svg" alt="BSSN (placeholder)" loading="lazy">
+          <img src="assets/logo.svg" alt="Kominfo (placeholder)" loading="lazy">
+          <img src="assets/logo.svg" alt="Polri Cyber Crime (placeholder)" loading="lazy">
+          <img src="assets/logo.svg" alt="Asosiasi E-commerce (placeholder)" loading="lazy">
+          <img src="assets/logo.svg" alt="Bank (placeholder)" loading="lazy">
+          <img src="assets/logo.svg" alt="Universitas (placeholder)" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section">
+      <div class="container">
+        <h2>FAQ</h2>
+        <div class="accordion" role="tablist" aria-label="Pertanyaan umum">
+          <div class="acc-item">
+            <button class="acc-btn" aria-expanded="true" aria-controls="faq1" id="faqbtn1">Apakah data saya aman?</button>
+            <div id="faq1" class="acc-panel" role="region" aria-labelledby="faqbtn1">
+              <p>Ya. Data dienkripsi, akses dibatasi, dan audit rutin dilakukan.</p>
+            </div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-btn" aria-expanded="false" aria-controls="faq2" id="faqbtn2">Bagaimana cara mulai?</button>
+            <div id="faq2" class="acc-panel" role="region" aria-labelledby="faqbtn2">
+              <p>Daftar, sambungkan email/marketplace, lakukan scan perdana.</p>
+            </div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-btn" aria-expanded="false" aria-controls="faq3" id="faqbtn3">Dukungan platform apa saja?</button>
+            <div id="faq3" class="acc-panel" role="region" aria-labelledby="faqbtn3">
+              <p>Gmail/Outlook, Tokopedia/Shopee, dan integrasi perbankan utama.</p>
+            </div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-btn" aria-expanded="false" aria-controls="faq4" id="faqbtn4">Berapa harganya?</button>
+            <div id="faq4" class="acc-panel" role="region" aria-labelledby="faqbtn4">
+              <p>Paket mulai 50rb/bulan hingga 500rb/bulan sesuai kebutuhan.</p>
+            </div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-btn" aria-expanded="false" aria-controls="faq5" id="faqbtn5">Apakah ada kontrak panjang?</button>
+            <div id="faq5" class="acc-panel" role="region" aria-labelledby="faqbtn5">
+              <p>Tidak wajib. Bisa bulanan dengan opsi tahunan lebih hemat.</p>
+            </div>
+          </div>
+          <div class="acc-item">
+            <button class="acc-btn" aria-expanded="false" aria-controls="faq6" id="faqbtn6">Bagaimana integrasi marketplace?</button>
+            <div id="faq6" class="acc-panel" role="region" aria-labelledby="faqbtn6">
+              <p>Gunakan API resmi; izin minimal sesuai prinsip <em>least privilege</em>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KONTAK -->
+    <section id="kontak" class="section">
+      <div class="container">
+        <h2>Kontak</h2>
+        <form class="contact" novalidate>
+          <div class="grid-2">
+            <label>Nama
+              <input type="text" name="nama" required aria-required="true" autocomplete="name" />
+            </label>
+            <label>Email
+              <input type="email" name="email" required aria-required="true" autocomplete="email" />
+            </label>
+          </div>
+          <label>Pesan
+            <textarea name="pesan" rows="4" required aria-required="true"></textarea>
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Kirim</button>
+            <button type="reset" class="btn btn-soft">Reset</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div class="col">
+          <div class="brand small">
+            <img src="assets/logo.svg" alt="" width="22" height="22" aria-hidden="true">
+            <span>AEGIS</span>
+          </div>
+          <small>© <span id="year"></span> AEGIS. Semua hak cipta dilindungi.</small>
+          <div class="badge">Made for UMKM Indonesia</div>
+        </div>
+        <div class="col">
+          <h4>Link Cepat</h4>
+          <ul>
+            <li><a href="#tentang">Tentang</a></li>
+            <li><a href="#fitur">Fitur</a></li>
+            <li><a href="#harga">Harga</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4>Kontak</h4>
+          <ul>
+            <li><a href="mailto:hallo@aegis.id">hallo@aegis.id</a></li>
+            <li>Jl. Aman No. 123, Jakarta</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4>Sosial</h4>
+          <ul class="socials">
+            <li><a href="#" aria-label="Instagram">IG</a></li>
+            <li><a href="#" aria-label="LinkedIn">IN</a></li>
+            <li><a href="#" aria-label="YouTube">YT</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+    <!-- MODAL DEMO SCAN -->
+    <div class="modal" id="demoModal" role="dialog" aria-modal="true" aria-labelledby="demoTitle" aria-hidden="true">
+      <div class="modal-backdrop" data-close-modal tabindex="-1"></div>
+      <div class="modal-dialog" role="document">
+        <header class="modal-header">
+          <h3 id="demoTitle">Demo Scan</h3>
+          <button class="iconbtn" data-close-modal aria-label="Tutup modal">&times;</button>
+        </header>
+        <div class="modal-body">
+          <label class="select">
+            Tipe Scan
+            <select id="scanType" aria-label="Pilih tipe scan">
+              <option>Invoice</option>
+              <option>Email</option>
+            </select>
+          </label>
+          <div class="dropzone" tabindex="0" aria-label="Unggah atau seret file ke sini (dummy)">
+            <input type="file" aria-hidden="true" tabindex="-1" />
+            <p><b>Upload/Drag</b> file Anda di sini (dummy)</p>
+          </div>
+          <button id="scanBtn" class="btn btn-primary">Mulai Scan</button>
+
+          <div id="scanState" class="scan-state" aria-live="polite">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+        <footer class="modal-footer">
+          <button class="btn btn-soft" data-close-modal>Tutup</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- SPESIFIKASI / CARA UJI -->
+    <section id="spec" hidden>
+      <h2>Cara Uji Lokal</h2>
+      <ol>
+        <li>Ekstrak arsip, lalu buka <code>index.html</code> di browser modern.</li>
+        <li>Tidak perlu server; seluruh interaksi berjalan di sisi klien.</li>
+        <li>Ukuran total &lt; 300KB tanpa aset besar; semua icon SVG ringan.</li>
+      </ol>
+      <h3>Lisensi Ikon</h3>
+      <p>Ikon SVG sederhana buatan sendiri sebagai placeholder; gunakan aset final sesuai kebutuhan.</p>
+    </section>
+  </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  function updateBadge(){
+    try{
+      const data = JSON.parse(localStorage.getItem('aegis_incidents')||'[]');
+      const open = data.filter(i=>i.status==='Open').length;
+      var b = document.getElementById('inc-badge'); if(b) b.textContent = open;
+    }catch(e){}
+  }
+  updateBadge();
+  window.addEventListener('storage', function(e){ if(e.key==='aegis_incidents'){ updateBadge(); } });
+});
+</script>
+
+</body>
+</html>
