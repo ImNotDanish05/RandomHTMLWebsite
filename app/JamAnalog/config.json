@@ -1,0 +1,25 @@
+{
+  "clock_size": {
+    "width": 500,
+    "height": 500
+  },
+  "person": {
+    "visible": true,
+    "x_px": 28,
+    "y_px": 115,
+    "width_px": 400,
+    "height_px": 400
+  },
+  "hand": {
+    "visible": true,
+    "scale_percent": 35,
+    "anchor_x_percent": 90,
+    "anchor_y_percent": 50,
+    "pos_x": -80,
+    "pos_y": 0
+  },
+  "options": {
+    "show_lines": true
+  },
+  "generated_at": "2025-12-10T10:22:37.121Z"
+}

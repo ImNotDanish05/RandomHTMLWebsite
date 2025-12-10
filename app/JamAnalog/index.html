@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jam Analog</title>
+  <link rel="icon" href="./public/images/icon.png" type="image/png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Inter, system-ui, Segoe UI, Arial, sans-serif;
+      background: #1a1a1a;
+    }
+    #clock-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #clock-canvas {
+      position: relative;
+      width: 100vmin;
+      height: 100vmin;
+      max-width: 100vw;
+      max-height: 100vh;
+    }
+    #clock-img {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    #person-img {
+      position: absolute;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    #hand-wrap {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      pointer-events: none;
+    }
+    #hand-img {
+      display: block;
+      height: auto;
+    }
+    svg.layers {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    #digital {
+      position: absolute;
+      left: 50%;
+      top: 5%;
+      transform: translateX(-50%);
+      font-weight: 700;
+      font-size: 3vmin;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 1vmin 2vmin;
+      border-radius: 1.5vmin;
+      box-shadow: 0 0.5vmin 2vmin rgba(0, 0, 0, 0.3);
+      color: #222;
+      letter-spacing: 0.2vmin;
+    }
+  </style>
+</head>
+<body>
+  <div id="clock-container">
+    <div id="clock-canvas">
+      <img id="clock-img" src="clock.png" alt="clock" crossorigin="anonymous">
+      <svg id="svg-layers" class="layers" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500"></svg>
+      <img id="person-img" src="person.png" alt="person">
+      <div id="hand-wrap">
+        <img id="hand-img" src="hand.png" alt="hand">
+      </div>
+      <div id="digital">--:--:--</div>
+    </div>
+  </div>
+
+<script>
+const svgLayers = document.getElementById('svg-layers');
+const personImg = document.getElementById('person-img');
+const handWrap = document.getElementById('hand-wrap');
+const handImg = document.getElementById('hand-img');
+const digital = document.getElementById('digital');
+
+// Configuration - CHANGE THESE VALUES TO ADJUST THE CLOCK
+const config = {
+  clock_size: { width: 500, height: 500 },
+  person: { visible: true, x_px: 28, y_px: 115, width_px: 400, height_px: 400 },
+  hand: { visible: true, scale_percent: 80, anchor_x_percent: 90, anchor_y_percent: 50, pos_x: -80, pos_y: 0 },
+  options: { show_lines: true }
+};
+
+const cw = config.clock_size.width;
+const ch = config.clock_size.height;
+const cx = cw / 2;
+const cy = ch / 2;
+
+// Apply person configuration
+function applyPersonConfig() {
+  personImg.style.display = config.person.visible ? 'block' : 'none';
+  personImg.style.left = (config.person.x_px / cw * 100) + '%';
+  personImg.style.top = (config.person.y_px / ch * 100) + '%';
+  personImg.style.width = (config.person.width_px / cw * 100) + '%';
+  personImg.style.height = (config.person.height_px / ch * 100) + '%';
+}
+
+// Apply hand configuration
+function applyHandConfig() {
+  handImg.style.display = config.hand.visible ? 'block' : 'none';
+  const handWidthVmin = (config.hand.scale_percent / 100) * 50; // 50vmin is roughly half the clock
+  handImg.style.width = handWidthVmin + 'vmin';
+  
+  handWrap.style.transformOrigin = config.hand.anchor_x_percent + '% ' + config.hand.anchor_y_percent + '%';
+  
+  // Position offset as percentage
+  const offsetX = (config.hand.pos_x / cw * 100) + '%';
+  const offsetY = (config.hand.pos_y / ch * 100) + '%';
+  handWrap.style.left = 'calc(50% + ' + offsetX + ')';
+  handWrap.style.top = 'calc(50% + ' + offsetY + ')';
+}
+
+// Draw clock ticks
+function drawTicks() {
+  if (!config.options.show_lines) return;
+  
+  const rOuter = Math.min(cw, ch) / 2 * 0.95;
+  for (let i = 0; i < 60; i++) {
+    const angle = (i / 60) * 360 - 90;
+    const rad = angle * Math.PI / 180;
+    const rInner = (i % 5 === 0) ? rOuter - 0.06 * Math.min(cw, ch) : rOuter - 0.02 * Math.min(cw, ch);
+    const x1 = cx + rInner * Math.cos(rad);
+    const y1 = cy + rInner * Math.sin(rad);
+    const x2 = cx + rOuter * Math.cos(rad);
+    const y2 = cy + rOuter * Math.sin(rad);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1);
+    line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2);
+    line.setAttribute('y2', y2);
+    line.setAttribute('stroke', '#000');
+    line.setAttribute('stroke-width', (i % 5 === 0) ? 3 : 1);
+    line.setAttribute('stroke-linecap', 'round');
+    svgLayers.appendChild(line);
+  }
+}
+
+// Draw hour and minute hands
+function drawHands(date) {
+  const existing = svgLayers.querySelectorAll('.dyn');
+  existing.forEach(n => n.remove());
+  
+  const r = Math.min(cw, ch) / 2 * 0.9;
+  
+  // Minute hand
+  const mins = date.getMinutes() + date.getSeconds() / 60;
+  const minAngle = (mins / 60) * 360 - 90;
+  const minLen = r * 0.78;
+  const minX = cx + minLen * Math.cos(minAngle * Math.PI / 180);
+  const minY = cy + minLen * Math.sin(minAngle * Math.PI / 180);
+  const lineMin = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  lineMin.setAttribute('x1', cx);
+  lineMin.setAttribute('y1', cy);
+  lineMin.setAttribute('x2', minX);
+  lineMin.setAttribute('y2', minY);
+  lineMin.setAttribute('stroke', '#000');
+  lineMin.setAttribute('stroke-width', 4);
+  lineMin.setAttribute('stroke-linecap', 'round');
+  lineMin.classList.add('dyn');
+  svgLayers.appendChild(lineMin);
+  
+  // Hour hand
+  const hours = (date.getHours() % 12) + date.getMinutes() / 60;
+  const hourAngle = (hours / 12) * 360 - 90;
+  const hourLen = r * 0.5;
+  const hourX = cx + hourLen * Math.cos(hourAngle * Math.PI / 180);
+  const hourY = cy + hourLen * Math.sin(hourAngle * Math.PI / 180);
+  const lineHour = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  lineHour.setAttribute('x1', cx);
+  lineHour.setAttribute('y1', cy);
+  lineHour.setAttribute('x2', hourX);
+  lineHour.setAttribute('y2', hourY);
+  lineHour.setAttribute('stroke', '#000');
+  lineHour.setAttribute('stroke-width', 6);
+  lineHour.setAttribute('stroke-linecap', 'round');
+  lineHour.classList.add('dyn');
+  svgLayers.appendChild(lineHour);
+}
+
+// Audio context for tick sound
+let audioContext = null;
+let lastSecond = -1;
+let audioEnabled = false;
+
+// Initialize audio on first user interaction
+function initAudio() {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
+  audioEnabled = true;
+  document.removeEventListener('click', initAudio);
+  document.removeEventListener('touchstart', initAudio);
+  document.removeEventListener('keydown', initAudio);
+}
+
+// Add listeners for user interaction
+document.addEventListener('click', initAudio);
+document.addEventListener('touchstart', initAudio);
+document.addEventListener('keydown', initAudio);
+
+// Play tick sound using Web Audio API (no file needed!)
+function playTickSound() {
+  if (!audioEnabled) return;
+  
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  
+  const oscillator = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
+  
+  oscillator.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+  
+  // Classic clock tick sound: short, sharp beep
+  oscillator.frequency.value = 800; // Hz
+  oscillator.type = 'sine';
+  
+  gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+  
+  oscillator.start(audioContext.currentTime);
+  oscillator.stop(audioContext.currentTime + 0.05);
+}
+
+// If you prefer to use an MP3 file instead, uncomment this:
+/*
+const tickAudio = new Audio('suara.mp3');
+tickAudio.preload = 'auto';
+let audioEnabled = false;
+function initAudio() {
+  audioEnabled = true;
+  document.removeEventListener('click', initAudio);
+}
+document.addEventListener('click', initAudio);
+function playTickSound() {
+  if (!audioEnabled) return;
+  tickAudio.currentTime = 0;
+  tickAudio.play().catch(e => console.log('Audio play failed:', e));
+}
+*/
+
+// Update clock every frame
+function tick() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  digital.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  
+  drawHands(now);
+  
+  // Get exact second (no milliseconds for discrete movement)
+  const s = now.getSeconds();
+  
+  // Play tick sound when second changes
+  if (s !== lastSecond) {
+    playTickSound();
+    lastSecond = s;
+  }
+  
+  // Rotate second hand (the hand image) - discrete, not smooth
+  // The hand image is rotated, and because anchor is at 90% (pointing left in the image),
+  // we need to add 90 degrees to make it point up at 0 seconds
+  const sAngle = (s / 60) * 360 + 90;
+  handWrap.style.transform = `translate(-50%, -50%) rotate(${sAngle}deg)`;
+}
+
+// Initialize
+applyPersonConfig();
+applyHandConfig();
+drawTicks();
+setInterval(tick, 50);
+tick();
+</script>
+</body>
+</html>

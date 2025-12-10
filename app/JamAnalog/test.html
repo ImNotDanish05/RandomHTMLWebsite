@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Senpai Clock Studio — Aria's Sarkas Clock</title>
+  <style>
+    :root{
+      --container-bg: #f6f7fb;
+      --accent: #222;
+      --ui-w: 320px;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:var(--container-bg);color:var(--accent)}
+    .app{display:flex;gap:20px;padding:18px;align-items:flex-start}
+
+    .preview{background:white;padding:12px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.06)}
+    #canvas-wrap{position:relative;display:inline-block;overflow:hidden}
+    #clock-img{display:block;max-width:100%;height:auto}
+    .overlay{position:absolute;left:0;top:0}
+
+    #person-img{position:absolute;will-change:transform;pointer-events:none}
+    #hand-wrap{position:absolute;left:50%;top:50%;pointer-events:none;}
+    #hand-img{display:block;will-change:transform;pointer-events:none}
+
+    svg.layers{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+
+    #digital{position:absolute;left:50%;transform:translateX(-50%);top:-46px;font-weight:700;background:rgba(255,255,255,0.9);padding:6px 10px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.06)}
+
+    .controls{width:var(--ui-w);background:white;padding:12px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.06)}
+    .controls h3{margin:6px 0 10px;font-size:16px}
+    .row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+    label{font-size:12px;color:#555}
+    input[type=range]{width:100%}
+    input[type=number], input[type=text]{width:100%;padding:6px;border-radius:6px;border:1px solid #ddd}
+    button{padding:8px 10px;border-radius:8px;border:0;background:#111;color:white;cursor:pointer}
+    textarea{width:100%;height:120px;padding:8px;border-radius:6px;border:1px solid #ddd;font-family:monospace}
+    .small{font-size:12px;color:#666}
+    .muted{font-size:12px;color:#888}
+    footer.note{margin-top:8px;font-size:12px;color:#666}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="preview">
+      <div id="digital">--:--:--</div>
+      <div id="canvas-wrap">
+        <img id="clock-img" class="overlay" src="clock.png" alt="clock" crossorigin="anonymous">
+        <svg id="svg-layers" class="layers overlay" xmlns="http://www.w3.org/2000/svg"></svg>
+        <img id="person-img" class="overlay" src="person.png" alt="person">
+        <div id="hand-wrap" class="overlay">
+          <img id="hand-img" src="hand.png" alt="hand">
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <h3>Clock Studio — Controls</h3>
+      <div class="row"><label>Clock natural size:</label><div id="size-info" class="muted">loading...</div></div>
+      <hr>
+      <div><strong>Person (person.png)</strong></div>
+      <div class="row"><label class="small">X (px)</label><input id="person-x" type="number" value="20"></div>
+      <div class="row"><label class="small">Y (px)</label><input id="person-y" type="number" value="20"></div>
+      <div class="row"><label class="small">Width (px)</label><input id="person-w" type="number" value="120"></div>
+      <div class="row"><label class="small">Height (px)</label><input id="person-h" type="number" value="120"></div>
+      <hr>
+      <div><strong>Second hand (hand.png)</strong></div>
+      <div class="row"><label class="small">Scale (%)</label><input id="hand-scale" type="number" value="100" min="10" max="500"></div>
+      <div class="row"><label class="small">Pivot X (%)</label><input id="hand-ax" type="number" value="50"></div>
+      <div class="row"><label class="small">Pivot Y (%)</label><input id="hand-ay" type="number" value="90"></div>
+      <div class="row"><label class="small">Position X (px)</label><input id="hand-x" type="number" value="0"></div>
+      <div class="row"><label class="small">Position Y (px)</label><input id="hand-y" type="number" value="0"></div>
+      <hr>
+      <div><strong>Options</strong></div>
+      <div class="row"><label class="small">Show hour/minute lines</label><input id="toggle-lines" type="checkbox" checked></div>
+      <div class="row"><label class="small">Show person</label><input id="toggle-person" type="checkbox" checked></div>
+      <div class="row"><label class="small">Show second hand image</label><input id="toggle-hand" type="checkbox" checked></div>
+      <hr>
+      <div><strong>Settings output</strong></div>
+      <div class="row"><button id="export-json">Export JSON</button><button id="copy-json">Copy</button></div>
+      <textarea id="settings-output" readonly></textarea>
+      <div class="row"><button id="reset-btn">Reset</button></div>
+      <footer class="note">Place <code>clock.png</code>, <code>person.png</code>, and <code>hand.png</code> in the same folder as this HTML file. No upload. Use the controls, then copy the JSON output.</footer>
+    </div>
+  </div>
+
+<script>
+const $ = id => document.getElementById(id);
+const clockImg = $('clock-img');
+const canvasWrap = $('canvas-wrap');
+const svgLayers = $('svg-layers');
+const personImg = $('person-img');
+const handWrap = $('hand-wrap');
+const handImg = $('hand-img');
+const digital = $('digital');
+const personX=$('person-x'), personY=$('person-y'), personW=$('person-w'), personH=$('person-h');
+const handScale=$('hand-scale'), handAx=$('hand-ax'), handAy=$('hand-ay'), handX=$('hand-x'), handY=$('hand-y');
+const toggleLines=$('toggle-lines'), togglePerson=$('toggle-person'), toggleHand=$('toggle-hand');
+const settingsOutput=$('settings-output');
+let cw=300,ch=300;
+
+clockImg.addEventListener('load',()=>{
+  cw=clockImg.naturalWidth; ch=clockImg.naturalHeight;
+  canvasWrap.style.width=cw+'px'; canvasWrap.style.height=ch+'px';
+  $('size-info').textContent=cw+' x '+ch+' px';
+  svgLayers.setAttribute('width',cw); svgLayers.setAttribute('height',ch); svgLayers.setAttribute('viewBox',`0 0 ${cw} ${ch}`);
+  applyAll();
+});
+
+function applyPerson(){
+  personImg.style.display=togglePerson.checked?'block':'none';
+  personImg.style.left=(personX.value|0)+'px';
+  personImg.style.top=(personY.value|0)+'px';
+  personImg.style.width=(personW.value|0)+'px';
+  personImg.style.height=(personH.value|0)+'px';
+}
+
+function applyHand(){
+  handWrap.style.display=toggleHand.checked?'block':'none';
+  const scale=(handScale.value|0)/100;
+  const w=handImg.naturalWidth?handImg.naturalWidth*scale:100*scale;
+  handImg.style.width=w+'px'; handImg.style.height='auto';
+  handWrap.style.transformOrigin=handAx.value+'% '+handAy.value+'%';
+  handWrap.style.left=(cw/2 + (handX.value|0))+'px';
+  handWrap.style.top=(ch/2 + (handY.value|0))+'px';
+}
+
+function drawTicks(){
+  while(svgLayers.firstChild) svgLayers.removeChild(svgLayers.firstChild);
+  const cx=cw/2,cy=ch/2,rOuter=Math.min(cw,ch)/2*0.95;
+  for(let i=0;i<60;i++){
+    const angle=(i/60)*360-90,rad=angle*Math.PI/180;
+    const rInner=(i%5===0)?rOuter-0.06*Math.min(cw,ch):rOuter-0.02*Math.min(cw,ch);
+    const x1=cx+rInner*Math.cos(rad), y1=cy+rInner*Math.sin(rad);
+    const x2=cx+rOuter*Math.cos(rad), y2=cy+rOuter*Math.sin(rad);
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('stroke','#000'); line.setAttribute('stroke-width',(i%5===0)?3:1);
+    line.setAttribute('stroke-linecap','round');
+    svgLayers.appendChild(line);
+  }
+}
+
+function drawHands(date){
+  const existing=svgLayers.querySelectorAll('.dyn'); existing.forEach(n=>n.remove());
+  const cx=cw/2,cy=ch/2,r=Math.min(cw,ch)/2*0.9;
+  const mins=date.getMinutes()+date.getSeconds()/60;
+  const minAngle=(mins/60)*360-90;
+  const minLen=r*0.78;
+  const minX=cx+minLen*Math.cos(minAngle*Math.PI/180);
+  const minY=cy+minLen*Math.sin(minAngle*Math.PI/180);
+  const lineMin=document.createElementNS('http://www.w3.org/2000/svg','line');
+  lineMin.setAttribute('x1',cx); lineMin.setAttribute('y1',cy);
+  lineMin.setAttribute('x2',minX); lineMin.setAttribute('y2',minY);
+  lineMin.setAttribute('stroke','#000'); lineMin.setAttribute('stroke-width',4); lineMin.setAttribute('stroke-linecap','round'); lineMin.classList.add('dyn');
+  svgLayers.appendChild(lineMin);
+
+  const hours=(date.getHours()%12)+date.getMinutes()/60;
+  const hourAngle=(hours/12)*360-90; const hourLen=r*0.5;
+  const hourX=cx+hourLen*Math.cos(hourAngle*Math.PI/180);
+  const hourY=cy+hourLen*Math.sin(hourAngle*Math.PI/180);
+  const lineHour=document.createElementNS('http://www.w3.org/2000/svg','line');
+  lineHour.setAttribute('x1',cx); lineHour.setAttribute('y1',cy);
+  lineHour.setAttribute('x2',hourX); lineHour.setAttribute('y2',hourY);
+  lineHour.setAttribute('stroke','#000'); lineHour.setAttribute('stroke-width',6); lineHour.setAttribute('stroke-linecap','round'); lineHour.classList.add('dyn');
+  svgLayers.appendChild(lineHour);
+}
+
+function applyAll(){ applyPerson(); applyHand(); drawTicks(); }
+
+function tick(){
+  const now=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  digital.textContent=pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
+  drawHands(now);
+  const s=now.getSeconds()+now.getMilliseconds()/1000;
+  const sAngle=(s/60)*360;
+  handWrap.style.transform=`translate(-50%,-50%) rotate(${sAngle}deg)`;
+}
+
+[personX,personY,personW,personH,handScale,handAx,handAy,handX,handY].forEach(el=>el.addEventListener('input',()=>{applyAll();updateOutput();}));
+[toggleLines,togglePerson,toggleHand].forEach(el=>el.addEventListener('change',()=>{applyAll();updateOutput();}));
+
+function gatherSettings(){
+  return {
+    clock_size:{width:cw,height:ch},
+    person:{visible:togglePerson.checked,x_px:Number(personX.value),y_px:Number(personY.value),width_px:Number(personW.value),height_px:Number(personH.value)},
+    hand:{visible:toggleHand.checked,scale_percent:Number(handScale.value),anchor_x_percent:Number(handAx.value),anchor_y_percent:Number(handAy.value),pos_x:Number(handX.value),pos_y:Number(handY.value)},
+    options:{show_lines:toggleLines.checked},
+    generated_at:new Date().toISOString()
+  };
+}
+function updateOutput(){settingsOutput.value=JSON.stringify(gatherSettings(),null,2);}
+$('export-json').addEventListener('click',()=>{updateOutput();});
+$('copy-json').addEventListener('click',()=>{settingsOutput.select();document.execCommand('copy');});
+$('reset-btn').addEventListener('click',()=>{personX.value=20; personY.value=20; personW.value=120; personH.value=120; handScale.value=100; handAx.value=50; handAy.value=90; handX.value=0; handY.value=0; toggleLines.checked=true; togglePerson.checked=true; toggleHand.checked=true; applyAll(); updateOutput();});
+updateOutput();
+setInterval(tick,100);
+handImg.addEventListener('load',()=>{applyHand();updateOutput();});
+personImg.addEventListener('load',()=>{applyPerson();updateOutput();});
+if(clockImg.complete) clockImg.dispatchEvent(new Event('load'));
+if(personImg.complete) personImg.dispatchEvent(new Event('load'));
+if(handImg.complete) handImg.dispatchEvent(new Event('load'));
+</script>
+</body>
+</html>
