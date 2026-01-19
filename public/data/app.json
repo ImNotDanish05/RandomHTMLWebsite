@@ -23,11 +23,15 @@
     "directory": "./app/AEGIS",
     "title": "AEGIS Mockup",
     "description": "Aplikasi yang bisa mendeteksi serangan pada aplikasi UMKM"
-  }
-  ,
+  },
   {
     "directory": "./app/JamAnalog",
     "title": "Jam Analog Sumatera",
     "description": "Jam analog dengan tema Sumatera Barat"
+  },
+  {
+    "directory": "./app/ProTimerAlarm",
+    "title": "Pro Timer Alarm",
+    "description": "Timer Alarm Premium but FREE!"
   }
 ]
