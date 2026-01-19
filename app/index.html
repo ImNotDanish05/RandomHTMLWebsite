@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting...</title>
+  <script>
+    (function () {
+      let path = window.location.pathname;
+
+      // Hapus trailing slash kalau ada
+      if (path.endsWith('/')) {
+        path = path.slice(0, -1);
+      }
+
+      // Mundur 1 directory
+      const parentPath = path.substring(0, path.lastIndexOf('/'));
+
+      // Redirect
+      window.location.href = parentPath || '/';
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>
