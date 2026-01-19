@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro Timer Alarm</title>
+<link rel="stylesheet" href="public/css/style.css">
+<link rel="icon" href="./public/images/icon.png" type="image/png">
+</head>
+<body>
+
+<!-- COOKIE CONSENT MODAL -->
+<div class="cookie-overlay" id="cookieOverlay">
+  <div class="cookie-content">
+    <span class="cookie-icon">🍪</span>
+    <div class="cookie-title">Simpan Pengaturan?</div>
+    <div class="cookie-desc">
+      Kami menggunakan Cookies & LocalStorage untuk menyimpan logo custom, durasi timer, dan alarm Anda agar tidak hilang saat kembali lagi.
+    </div>
+    <button class="main-btn btn-start" onclick="acceptCookies()">Izinkan & Simpan Data</button>
+  </div>
+</div>
+
+<div class="fs-controls">
+  <button class="fs-btn" id="fsPlayBtn" onclick="toggleTimerSmart()" title="Play/Pause">▶</button>
+  <button class="fs-btn fs-btn-exit" onclick="exitFullscreen()" title="Keluar Fullscreen">✕</button>
+</div>
+
+<div class="container">
+  <button class="btn-fullscreen-toggle" onclick="toggleFullscreen()" title="Mode Layar Penuh">⛶</button>
+  
+  <!-- LOGO UPLOAD AREA -->
+  <div class="logo-container">
+    <input type="file" id="logoUpload" accept="image/*" style="display: none;" onchange="handleLogoUpload(this)">
+    <img src="https://placehold.co/200x100/png?text=Klik+Upload+Logo" alt="Logo" class="logo-img" id="logoDisplay" onclick="document.getElementById('logoUpload').click()" title="Klik untuk ganti logo">
+    <div class="logo-hint">Klik gambar untuk ganti logo</div>
+  </div>
+
+  <h2>⏰ Pro Timer Alarm</h2>
+
+  <div class="input-group">
+    <label>Durasi Total (Menit)</label>
+    <input type="number" id="timerDuration" class="main-input" value="15" placeholder="Total waktu..." onchange="saveData()">
+  </div>
+
+  <div class="input-group">
+    <label>Bunyi Alarm pada sisa menit ke:</label>
+    <div id="alarmList"></div>
+    <button class="btn-add-alarm" onclick="addAlarmField()">+ Tambah Waktu Alarm</button>
+  </div>
+
+  <!-- Pengaturan Waktu Habis -->
+  <div class="input-group">
+    <label>Saat Waktu Habis (00:00)</label>
+    <div class="end-settings-row">
+        <select id="endSoundSelect" class="sound-select" style="flex: 1;" onchange="saveData()">
+            <option value="oscillator">Bip Standar (Oscillator)</option>
+            <option value="beep">Google Beep</option>
+            <option value="digital">Digital Watch</option>
+            <option value="bell">Lonceng (Bell)</option>
+            <option value="mechanic">Jam Mekanik</option>
+            <option value="scifi">Alarm Sci-Fi</option>
+        </select>
+        <label class="loop-checkbox-label">
+            <input type="checkbox" id="endLoopCheck" onchange="saveData()"> Loop
+        </label>
+    </div>
+  </div>
+
+  <div class="timer-display" id="display" onclick="toggleFullscreen()">00:00</div>
+  
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="btn-group">
+    <button class="main-btn btn-start" id="mainStartBtn" onclick="startTimer()">Mulai Timer</button>
+    <button class="main-btn btn-reset" onclick="resetTimer()">Reset</button>
+  </div>
+
+  <div class="status-text" id="statusInfo">Siap dimulai...</div>
+</div>
+
+<script src="public/js/script.js"></script>
+
+</body>
+</html>
