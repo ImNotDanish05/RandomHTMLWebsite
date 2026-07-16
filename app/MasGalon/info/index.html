@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags -->
+  <title>Informasi Repositori GitHub - Mas Galon</title>
+  <meta name="title" content="Informasi Repositori GitHub - Mas Galon">
+  <meta name="description" content="Informasi akses dan daftar repositori kode sumber proyek aplikasi Mas Galon.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="../public/images/logo.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Style Embedded to make it self-contained -->
+  <style>
+    :root {
+      --bg-color: #fbf2e0;
+      --primary-green: #81c642;
+      --primary-green-hover: #6eb034;
+      --primary-blue: #007fdc;
+      --primary-blue-hover: #0069b7;
+      --text-dark: #2d3748;
+      --text-light: #64748b;
+      --white: #ffffff;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 10px 25px rgba(45, 55, 72, 0.08);
+      --shadow-lg: 0 20px 40px rgba(45, 55, 72, 0.12);
+      --font-poppins: 'Poppins', sans-serif;
+      --font-jakarta: 'Plus Jakarta Sans', sans-serif;
+      --border-radius: 16px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-jakarta);
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    /* Navbar / Back Button Header */
+    .header-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 48px;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-dark);
+      font-family: var(--font-poppins);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 10px 20px;
+      background-color: rgba(45, 55, 72, 0.05);
+      border-radius: 30px;
+      transition: var(--transition);
+    }
+
+    .btn-back:hover {
+      background-color: var(--text-dark);
+      color: var(--white);
+      transform: translateX(-4px);
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-img {
+      height: 32px;
+      width: auto;
+    }
+
+    .brand-name {
+      font-family: var(--font-poppins);
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--text-dark);
+    }
+
+    .text-blue {
+      color: var(--primary-blue);
+    }
+
+    /* Main Content */
+    .content-area {
+      background-color: var(--white);
+      border-radius: var(--border-radius);
+      padding: 40px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(45, 55, 72, 0.03);
+    }
+
+    .page-title {
+      font-family: var(--font-poppins);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      line-height: 1.3;
+      letter-spacing: -0.5px;
+    }
+
+    .page-desc {
+      color: var(--text-light);
+      font-size: 1rem;
+      margin-bottom: 32px;
+    }
+
+    /* Repository Cards */
+    .repo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .repo-card {
+      background-color: rgba(251, 242, 224, 0.3);
+      border: 1px solid rgba(45, 55, 72, 0.05);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      transition: var(--transition);
+    }
+
+    .repo-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary-blue);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .repo-details {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .repo-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background-color: #f6f8fa;
+      color: #24292f;
+      border: 1px solid #d0d7de;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .repo-icon-box .gh-logo {
+      width: 26px;
+      height: 26px;
+      fill: #24292f;
+    }
+
+    .repo-info-text h4 {
+      font-family: var(--font-poppins);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge-status {
+      font-family: var(--font-jakarta);
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background-color: #fee2e2;
+      color: #ef4444;
+      border: 1px solid #fecaca;
+    }
+
+    .repo-path {
+      font-size: 0.88rem;
+      color: var(--text-light);
+      font-family: monospace;
+    }
+
+    .btn-repo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background-color: var(--white);
+      color: var(--text-dark);
+      border: 1px solid rgba(45, 55, 72, 0.1);
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-repo:hover {
+      background-color: var(--primary-blue);
+      color: var(--white);
+      border-color: var(--primary-blue);
+      transform: scale(1.05);
+    }
+
+    .repo-card:nth-child(2) .btn-repo:hover {
+      background-color: var(--primary-green);
+      border-color: var(--primary-green);
+    }
+
+    /* GitHub-Style Repo Details */
+    .repo-description {
+      font-size: 0.88rem;
+      color: var(--text-light);
+      margin-top: 10px;
+      margin-bottom: 14px;
+      max-width: 580px;
+      line-height: 1.5;
+    }
+
+    .repo-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+
+    .lang-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .lang-color {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .lang-dart {
+      background-color: #00B4AB;
+    }
+
+    .lang-typescript {
+      background-color: #3178c6;
+    }
+
+    .lang-pgsql {
+      background-color: #0064a5;
+    }
+
+    .github-title-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .github-header-icon {
+      width: 28px;
+      height: 28px;
+      color: var(--text-dark);
+    }
+
+    /* Warning Notice Box */
+    .notice-box {
+      background-color: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 24px;
+      display: flex;
+      gap: 16px;
+      margin-top: 36px;
+    }
+
+    .notice-icon-box {
+      color: #f59e0b;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .notice-icon-box svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .notice-title {
+      font-family: var(--font-poppins);
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #78350f;
+      margin-bottom: 8px;
+    }
+
+    .notice-text {
+      font-size: 0.95rem;
+      color: #92400e;
+      line-height: 1.6;
+    }
+
+    .notice-text p {
+      margin-bottom: 12px;
+    }
+
+    .notice-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .contact-item {
+      font-weight: 700;
+      background-color: rgba(245, 158, 11, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #b45309;
+    }
+
+    /* Footer styling */
+    .footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 30px 24px;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      border-top: 1px solid rgba(45, 55, 72, 0.05);
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .content-area {
+        padding: 24px;
+      }
+      .page-title {
+        font-size: 1.6rem;
+      }
+      .repo-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .btn-repo {
+        width: 100%;
+        border-radius: 8px;
+        height: 44px;
+        gap: 8px;
+        font-family: var(--font-poppins);
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      .btn-repo::after {
+        content: 'Buka di GitHub';
+      }
+      .notice-box {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Navbar Mini / Back Navigation -->
+    <header class="header-nav">
+      <a href="../index.html" class="btn-back">
+        <i data-lucide="arrow-left"></i>
+        <span>Kembali</span>
+      </a>
+      <div class="logo-area">
+        <img src="../public/images/logo.png" alt="Mas Galon Logo" class="logo-img">
+        <span class="brand-name">Mas <span class="text-blue">Galon</span></span>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+      <div class="github-title-area">
+        <i data-lucide="github" class="github-header-icon"></i>
+        <h1 class="page-title">Repositori Kode Sumber</h1>
+      </div>
+      <p class="page-desc">Ekosistem aplikasi Mas Galon dikembangkan secara modular dalam repositori terpisah berikut:</p>
+
+      <!-- Repository List -->
+      <div class="repo-list">
+        <!-- Card 1: Admin & Kurir -->
+        <div class="repo-card">
+          <div class="repo-details-wrapper" style="width: 100%;">
+            <div class="repo-details">
+              <div class="repo-icon-box">
+                <svg class="gh-logo" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/></svg>
+              </div>
+              <div class="repo-info-text" style="width: 100%;">
+                <h4>
+                  <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_admin/" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: var(--text-dark);">
+                    ImNotDanish05 / pbl_android_masgalon_admin
+                  </a>
+                  <span class="badge-status">Private</span>
+                </h4>
+              </div>
+            </div>
+            <p class="repo-description">
+              Portal Mitra Mas Galon - Aplikasi Flutter (Role-based: Admin & Kurir) yang terintegrasi dengan Supabase Realtime & OpenStreetMap untuk kelola pesanan dan armada.
+            </p>
+            <div class="repo-meta">
+              <div class="lang-item">
+                <span class="lang-color lang-dart"></span>
+                <span>Dart</span>
+              </div>
+              <div>MIT License</div>
+            </div>
+          </div>
+          <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_admin/" target="_blank" rel="noopener noreferrer" class="btn-repo" aria-label="Buka Repositori Admin & Kurir di GitHub">
+            <i data-lucide="github"></i>
+          </a>
+        </div>
+
+        <!-- Card 2: Customer -->
+        <div class="repo-card">
+          <div class="repo-details-wrapper" style="width: 100%;">
+            <div class="repo-details">
+              <div class="repo-icon-box">
+                <svg class="gh-logo" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/></svg>
+              </div>
+              <div class="repo-info-text" style="width: 100%;">
+                <h4>
+                  <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_customer" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: var(--text-dark);">
+                    ImNotDanish05 / pbl_android_masgalon_customer
+                  </a>
+                  <span class="badge-status">Private</span>
+                </h4>
+              </div>
+            </div>
+            <p class="repo-description">
+              Aplikasi Pelanggan Mas Galon - Memesan air galon & gas LPG, top-up saldo abunemen prabayar, chat kurir, & lacak lokasi kurir secara real-time.
+            </p>
+            <div class="repo-meta">
+              <div class="lang-item">
+                <span class="lang-color lang-dart"></span>
+                <span>Dart</span>
+              </div>
+              <div>MIT License</div>
+            </div>
+          </div>
+          <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_customer" target="_blank" rel="noopener noreferrer" class="btn-repo" aria-label="Buka Repositori Customer di GitHub">
+            <i data-lucide="github"></i>
+          </a>
+        </div>
+
+        <!-- Card 3: Supabase -->
+        <div class="repo-card">
+          <div class="repo-details-wrapper" style="width: 100%;">
+            <div class="repo-details">
+              <div class="repo-icon-box">
+                <svg class="gh-logo" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/></svg>
+              </div>
+              <div class="repo-info-text" style="width: 100%;">
+                <h4>
+                  <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_supabase" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: var(--text-dark);">
+                    ImNotDanish05 / pbl_android_masgalon_supabase
+                  </a>
+                  <span class="badge-status">Private</span>
+                </h4>
+              </div>
+            </div>
+            <p class="repo-description">
+              Backend BaaS Mas Galon - Skema basis data PostgreSQL, database webhook functions (Deno), & push notifications FCM HTTP v1.
+            </p>
+            <div class="repo-meta">
+              <div class="lang-item">
+                <span class="lang-color lang-typescript"></span>
+                <span>TypeScript</span>
+              </div>
+              <div class="lang-item">
+                <span class="lang-color lang-pgsql"></span>
+                <span>PL/pgSQL</span>
+              </div>
+            </div>
+          </div>
+          <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_supabase" target="_blank" rel="noopener noreferrer" class="btn-repo" aria-label="Buka Repositori Supabase di GitHub">
+            <i data-lucide="github"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Warning & Notice Box -->
+      <div class="notice-box">
+        <div class="notice-icon-box">
+          <i data-lucide="lock"></i>
+        </div>
+        <div class="notice-container">
+          <h4 class="notice-title">Status Akses Repositori</h4>
+          <div class="notice-text">
+            <p>
+              Saat ini, seluruh repositori kode sumber di atas berstatus <strong>Private</strong> untuk menjaga kerahasiaan akademik. Akses kolaborator hanya diberikan secara khusus kepada dosen pembimbing dan dosen penguji yang memiliki izin. Repositori ini direncanakan akan dibuka untuk umum (*open-source*) di masa mendatang.
+            </p>
+            <p>
+              Bagi Anda yang memerlukan akses peninjauan atau ingin bertanya lebih lanjut seputar proyek ini, silakan hubungi tim <strong>CodeNova</strong> secara langsung via Discord: <span class="contact-item">imnotdanish05</span>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2026 CodeNova. Wilayah Operasional: Perum Dinar Mas</p>
+  </footer>
+
+  <!-- Lucide Script CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    // Initialize Lucide Icons for the page
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>
