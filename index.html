@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <!-- Animated Nebula/Aurora Background -->
     <div class="bg-nebula">
@@ -79,10 +81,50 @@
             </div>
             <hr>
             <h3>About WebOS</h3>
-            <p>WebOS compiles standalone projects into an integrated, interactive workspace. Double-click icons on the desktop to launch applications in draggable/resizable windows or open them in a browser tab.</p>
+            <p>WebOS compiles standalone projects into an integrated, interactive workspace. Double-click icons on the
+                desktop to launch applications in draggable/resizable windows or open them in a browser tab.</p>
         </div>
         <div class="start-menu-footer">
             <button class="action-btn" onclick="toggleStartMenu(event)"><i class="fa-solid fa-xmark"></i> Close</button>
+        </div>
+    </div>
+
+    <!-- Custom Context Menu -->
+    <div class="context-menu" id="context-menu">
+        <div class="context-menu-item" id="context-menu-open">
+            <i class="fa-solid fa-folder-open"></i>
+            <span>Open App</span>
+        </div>
+        <div class="context-menu-item" id="context-menu-info">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Information</span>
+        </div>
+    </div>
+
+    <!-- Custom Alert / Modal for App Info -->
+    <div class="info-modal-overlay" id="info-modal-overlay" onclick="closeInfoModal()">
+        <div class="info-modal" onclick="event.stopPropagation()">
+            <div class="info-modal-header">
+                <h4 id="info-modal-title">App Info</h4>
+                <button class="info-modal-close" onclick="closeInfoModal()">&times;</button>
+            </div>
+            <div class="info-modal-body">
+                <div class="info-modal-icon-container">
+                    <img id="info-modal-icon" src="" alt="" onerror="this.src='./public/images/icon.png'">
+                </div>
+                <div class="info-modal-details">
+                    <h3 id="info-modal-app-title">Application</h3>
+                    <p id="info-modal-app-desc">Description</p>
+                    <div class="info-modal-path-container">
+                        <span class="path-label">Location:</span>
+                        <span id="info-modal-app-path" class="path-value">./app/path</span>
+                    </div>
+                </div>
+            </div>
+            <div class="info-modal-footer">
+                <button class="info-modal-btn info-modal-open-btn" id="info-modal-open-btn">Open App</button>
+                <button class="info-modal-btn info-modal-close-btn" onclick="closeInfoModal()">Close</button>
+            </div>
         </div>
     </div>
 
@@ -118,13 +160,24 @@
             startMenu.classList.toggle('open');
         }
 
-        // Close Start Menu if clicking outside
+        // Close menus if clicking outside
         document.addEventListener('click', (e) => {
+            const menu = document.getElementById('context-menu');
+            if (menu && menu.style.display === 'block') {
+                menu.style.display = 'none';
+            }
+
             const startMenu = document.getElementById('start-menu');
             const startBtn = document.getElementById('start-btn');
             if (startMenu.classList.contains('open') && !startMenu.contains(e.target) && !startBtn.contains(e.target)) {
                 startMenu.classList.remove('open');
             }
+        });
+
+        // Close context menu on resize
+        window.addEventListener('resize', () => {
+            const menu = document.getElementById('context-menu');
+            if (menu) menu.style.display = 'none';
         });
 
         // App Manager & Window Logic
@@ -141,51 +194,51 @@
             } catch (error) {
                 console.warn("Using fallback local data due to: ", error);
                 appsData = [
-                  {
-                    "directory": "./app/MatchTheSentence",
-                    "title": "Matching Game",
-                    "description": "A fun matching game to connect words and definitions!"
-                  },
-                  {
-                    "directory": "./app/DemoBerita",
-                    "title": "Demo Berita",
-                    "description": "Berita demo untuk tugas Crazy Eight di Desain UIUX"
-                  },
-                  {
-                    "directory": "./app/CanvaCrash",
-                    "title": "Canva Crash",
-                    "description": "Tampilan Canva Crash seperti apa"
-                  },
-                  {
-                    "directory": "./app/AnimeScroll",
-                    "title": "Anime Scroll",
-                    "description": "Deep Scrolling Anime until u tired xD"
-                  },
-                  {
-                    "directory": "./app/AEGIS",
-                    "title": "AEGIS Mockup",
-                    "description": "Aplikasi yang bisa mendeteksi serangan pada aplikasi UMKM"
-                  },
-                  {
-                    "directory": "./app/JamAnalog",
-                    "title": "Jam Analog Sumatera",
-                    "description": "Jam analog dengan tema Sumatera Barat"
-                  },
-                  {
-                    "directory": "./app/ProTimerAlarm",
-                    "title": "Pro Timer Alarm",
-                    "description": "Timer Alarm Premium but FREE!"
-                  },
-                  {
-                    "directory": "./app/Jokes",
-                    "title": "Random Joke Dashboard",
-                    "description": "Dashboard penyedia lelucon acak yang seru dan menghibur!"
-                  },
-                  {
-                    "directory": "./app/MasGalon",
-                    "title": "Mas Galon",
-                    "description": "Pesan galon air dan gas LPG dengan sistem abunemen prabayar praktis di Perum Dinar Mas."
-                  }
+                    {
+                        "directory": "./app/MatchTheSentence",
+                        "title": "Matching Game",
+                        "description": "A fun matching game to connect words and definitions!"
+                    },
+                    {
+                        "directory": "./app/DemoBerita",
+                        "title": "Demo Berita",
+                        "description": "Berita demo untuk tugas Crazy Eight di Desain UIUX"
+                    },
+                    {
+                        "directory": "./app/CanvaCrash",
+                        "title": "Canva Crash",
+                        "description": "Tampilan Canva Crash seperti apa"
+                    },
+                    {
+                        "directory": "./app/AnimeScroll",
+                        "title": "Anime Scroll",
+                        "description": "Deep Scrolling Anime until u tired xD"
+                    },
+                    {
+                        "directory": "./app/AEGIS",
+                        "title": "AEGIS Mockup",
+                        "description": "Aplikasi yang bisa mendeteksi serangan pada aplikasi UMKM"
+                    },
+                    {
+                        "directory": "./app/JamAnalog",
+                        "title": "Jam Analog Sumatera",
+                        "description": "Jam analog dengan tema Sumatera Barat"
+                    },
+                    {
+                        "directory": "./app/ProTimerAlarm",
+                        "title": "Pro Timer Alarm",
+                        "description": "Timer Alarm Premium but FREE!"
+                    },
+                    {
+                        "directory": "./app/Jokes",
+                        "title": "Random Joke Dashboard",
+                        "description": "Dashboard penyedia lelucon acak yang seru dan menghibur!"
+                    },
+                    {
+                        "directory": "./app/MasGalon",
+                        "title": "Mas Galon",
+                        "description": "Pesan galon air dan gas LPG dengan sistem abunemen prabayar praktis di Perum Dinar Mas."
+                    }
                 ];
             }
 
@@ -210,6 +263,14 @@
                     `;
                     // Double-click or single-click opens application
                     desktopIcon.addEventListener('click', () => openWindow(app));
+
+                    // Right-click context menu
+                    desktopIcon.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showContextMenu(e, app);
+                    });
+
                     grid.appendChild(desktopIcon);
                 });
             } catch (error) {
@@ -405,7 +466,7 @@
                 if (e.target.closest('.win-btn') || e.target.closest('.win-tab')) return;
 
                 e = e || window.event;
-                
+
                 makeActiveWindow(winEl);
 
                 iframe = winEl.querySelector('iframe');
@@ -520,8 +581,82 @@
             }
         }
 
+        // Context Menu & Info Modal Implementation
+        let activeAppForContext = null;
+
+        function showContextMenu(e, app) {
+            const menu = document.getElementById('context-menu');
+            activeAppForContext = app;
+
+            menu.style.display = 'block';
+            
+            let posX = e.clientX;
+            let posY = e.clientY;
+            
+            const menuWidth = menu.offsetWidth || 160;
+            const menuHeight = menu.offsetHeight || 80;
+            
+            if (posX + menuWidth > window.innerWidth) {
+                posX = window.innerWidth - menuWidth - 10;
+            }
+            if (posY + menuHeight > window.innerHeight) {
+                posY = window.innerHeight - menuHeight - 10;
+            }
+
+            menu.style.left = posX + 'px';
+            menu.style.top = posY + 'px';
+        }
+
+        // Setup Context Menu Action Listeners
+        document.getElementById('context-menu-open').addEventListener('click', () => {
+            if (activeAppForContext) {
+                openWindow(activeAppForContext);
+            }
+        });
+
+        document.getElementById('context-menu-info').addEventListener('click', () => {
+            if (activeAppForContext) {
+                showInfoModal(activeAppForContext);
+            }
+        });
+
+        function showInfoModal(app) {
+            const overlay = document.getElementById('info-modal-overlay');
+            const iconPath = `${app.directory}/public/images/icon.png`;
+
+            document.getElementById('info-modal-title').textContent = `${app.title} Info`;
+            document.getElementById('info-modal-icon').src = iconPath;
+            document.getElementById('info-modal-app-title').textContent = app.title;
+            document.getElementById('info-modal-app-desc').textContent = app.description || 'No description available.';
+            document.getElementById('info-modal-app-path').textContent = app.directory;
+
+            // Update open button
+            const openBtn = document.getElementById('info-modal-open-btn');
+            const newOpenBtn = openBtn.cloneNode(true);
+            openBtn.parentNode.replaceChild(newOpenBtn, openBtn);
+            
+            newOpenBtn.addEventListener('click', () => {
+                openWindow(app);
+                closeInfoModal();
+            });
+
+            // Open Modal
+            overlay.style.display = 'flex';
+            overlay.offsetHeight; // Force reflow
+            overlay.classList.add('open');
+        }
+
+        function closeInfoModal() {
+            const overlay = document.getElementById('info-modal-overlay');
+            overlay.classList.remove('open');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 250);
+        }
+
         // Load applications on start
         window.addEventListener('DOMContentLoaded', loadSystemApps);
     </script>
 </body>
+
 </html>
