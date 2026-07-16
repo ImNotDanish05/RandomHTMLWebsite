@@ -1,3 +1,473 @@
-<div>
-  INi website mas galon
-</div>
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags -->
+  <title>Mas Galon - Aplikasi Layanan Abunemen Galon & Gas Dinar Mas</title>
+  <meta name="title" content="Mas Galon - Aplikasi Layanan Abunemen Galon & Gas Dinar Mas">
+  <meta name="description" content="Download aplikasi Mas Galon. Pesan galon air dan tabung gas LPG dengan sistem abunemen prabayar praktis, lacak kurir real-time, dan pengiriman efisien di Perum Dinar Mas.">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://github.com/ImNotDanish05/RandomHTMLWebsite">
+  <meta property="og:title" content="Mas Galon - Aplikasi Layanan Abunemen Galon & Gas Dinar Mas">
+  <meta property="og:description" content="Download aplikasi Mas Galon. Pesan galon air dan tabung gas LPG dengan sistem abunemen prabayar praktis, lacak kurir real-time, dan pengiriman efisien di Perum Dinar Mas.">
+  <meta property="og:image" content="./public/images/logo.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="./public/css/style.css">
+</head>
+
+<body>
+  <!-- Header / Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="#" class="logo-area">
+        <img src="./public/images/logo.png" alt="Mas Galon Logo" class="nav-logo">
+        <span class="brand-name">Mas <span class="text-blue">Galon</span></span>
+      </a>
+      <nav class="nav-links">
+        <a href="#fitur" class="nav-link">Fitur Utama</a>
+        <a href="#download" class="nav-link">Pilih Aplikasi</a>
+        <a href="#panduan" class="nav-link">Cara Install</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="#download" class="btn btn-primary btn-sm">Download Sekarang</a>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu">
+        <i data-lucide="menu" class="icon-menu"></i>
+        <i data-lucide="x" class="icon-close hidden"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Navigation Overlay -->
+  <div class="mobile-nav" id="mobileNav">
+    <nav class="mobile-nav-links">
+      <a href="#fitur" class="mobile-link">Fitur Utama</a>
+      <a href="#download" class="mobile-link">Pilih Aplikasi</a>
+      <a href="#panduan" class="mobile-link">Cara Install</a>
+      <a href="#faq" class="mobile-link">FAQ</a>
+      <a href="#download" class="btn btn-primary mobile-btn">Download Sekarang</a>
+    </nav>
+  </div>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+      <div class="container hero-container">
+        <div class="hero-content">
+          <div class="badge-tag">
+            <span class="badge-dot"></span> Khusus Wilayah Perum Dinar Mas
+          </div>
+          <h1 class="hero-title">Pesan Air Galon & Gas LPG Kini <span class="text-gradient">Lebih Praktis!</span></h1>
+          <p class="hero-desc">
+            Nikmati kemudahan memesan kebutuhan air galon dan tabung gas menggunakan sistem <strong>Abunemen Saldo Prabayar</strong>. Dilengkapi dengan pelacakan kurir real-time dan optimasi rute untuk pengiriman yang super cepat.
+          </p>
+          <div class="hero-actions">
+            <a href="#download-customer" class="btn btn-primary">
+              <i data-lucide="download" class="btn-icon"></i>
+              <span>Download App Customer</span>
+            </a>
+            <a href="#download-mitra" class="btn btn-outline">
+              <i data-lucide="shield-check" class="btn-icon"></i>
+              <span>Portal Mitra (Admin/Kurir)</span>
+            </a>
+          </div>
+        </div>
+        
+        <div class="hero-visual">
+          <div class="mockup-container">
+            <!-- Floating Badges for visual depth -->
+            <div class="floating-badge badge-1">
+              <div class="badge-icon icon-blue"><i data-lucide="map-pin"></i></div>
+              <div class="badge-text">
+                <strong>Real-Time Map</strong>
+                <span>Lacak Kurir Instan</span>
+              </div>
+            </div>
+            <div class="floating-badge badge-2">
+              <div class="badge-icon icon-green"><i data-lucide="award"></i></div>
+              <div class="badge-text">
+                <strong>Saldo Abunemen</strong>
+                <span>Praktis Tanpa Uang Pas</span>
+              </div>
+            </div>
+            <!-- Main Phone Mockup -->
+            <div class="phone-frame">
+              <div class="phone-speaker"></div>
+              <div class="phone-screen">
+                <img src="./public/images/app_phone.jpeg" alt="Tampilan Aplikasi Mas Galon" class="phone-screen-img">
+              </div>
+              <div class="phone-button"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- App Switcher / Download Section -->
+    <section class="download-section" id="download">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Pilih Aplikasi Sesuai Kebutuhan Anda</h2>
+          <p class="section-subtitle">Kami menyediakan dua aplikasi khusus untuk memudahkan interaksi antara pelanggan dan tim operasional.</p>
+        </div>
+
+        <!-- Tab Switches -->
+        <div class="tab-switcher">
+          <button class="tab-btn active" data-tab="customer">
+            <i data-lucide="shopping-cart"></i>
+            <span>Aplikasi Customer</span>
+          </button>
+          <button class="tab-btn" data-tab="mitra">
+            <i data-lucide="shield-check"></i>
+            <span>Portal Mitra (Admin & Kurir)</span>
+          </button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-container">
+          <!-- Customer App Tab -->
+          <div class="tab-content active" id="tab-customer">
+            <div class="tab-grid">
+              <div class="tab-info">
+                <div class="app-tag tag-blue">Aplikasi Pelanggan</div>
+                <h3>Mas Galon (Customer)</h3>
+                <p class="app-desc">
+                  Aplikasi utama untuk warga perumahan. Dapatkan kemudahan memesan air galon dan gas dalam hitungan detik tanpa perlu keluar rumah atau repot mencari uang pas.
+                </p>
+                <ul class="benefit-list">
+                  <li>
+                    <span class="icon-check"><i data-lucide="check"></i></span>
+                    <span><strong>Sistem Saldo Prabayar</strong>: Isi saldo abunemen sekali, pesan berkali-kali.</span>
+                  </li>
+                  <li>
+                    <span class="icon-check"><i data-lucide="check"></i></span>
+                    <span><strong>Lacak Kurir Aktif</strong>: Pantau posisi kurir pengantar di peta real-time secara presisi.</span>
+                  </li>
+                  <li>
+                    <span class="icon-check"><i data-lucide="check"></i></span>
+                    <span><strong>Chat Langsung</strong>: Hubungi kurir langsung dari dalam aplikasi jika ada instruksi khusus.</span>
+                  </li>
+                  <li>
+                    <span class="icon-check"><i data-lucide="check"></i></span>
+                    <span><strong>Notifikasi Push</strong>: Terima pembaruan status pesanan mulai dari diproses hingga sampai depan rumah.</span>
+                  </li>
+                </ul>
+                <div class="download-box">
+                  <a href="https://github.com/ImNotDanish05/RandomHTMLWebsite/releases/download/v.0.0.0.1/Mas_Galon.apk" class="btn btn-primary btn-lg" id="download-customer">
+                    <i data-lucide="download"></i>
+                    <div>
+                      <span class="btn-subtext">Download untuk Android</span>
+                      <span class="btn-maintext">Mas_Galon.apk</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="tab-visual-preview">
+                <div class="preview-card bg-warm">
+                  <div class="card-header-mock">
+                    <span class="mock-dot"></span>
+                    <span class="mock-dot"></span>
+                    <span class="mock-dot"></span>
+                  </div>
+                  <div class="card-body-mock">
+                    <div class="balance-card-mock">
+                      <div class="balance-title">Saldo Abunemen Anda</div>
+                      <div class="balance-amount">Rp 75.000</div>
+                      <div class="balance-footer">Terakhir top-up: Hari ini, 09:30</div>
+                    </div>
+                    <div class="product-grid-mock">
+                      <div class="product-item-mock">
+                        <div class="product-icon-mock">🍼</div>
+                        <div class="product-name-mock">Galon Refill</div>
+                        <div class="product-price-mock">Rp 6.000</div>
+                      </div>
+                      <div class="product-item-mock">
+                        <div class="product-icon-mock">💚</div>
+                        <div class="product-name-mock">Gas LPG 3kg</div>
+                        <div class="product-price-mock">Rp 20.000</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mitra App Tab -->
+          <div class="tab-content" id="tab-mitra">
+            <div class="tab-grid">
+              <div class="tab-info">
+                <div class="app-tag tag-green">Portal Mitra Kerja</div>
+                <h3>Mas Galon Admin & Kurir</h3>
+                <p class="app-desc">
+                  Satu aplikasi dengan dua peran pintar (Role-based Portal) untuk mengelola seluruh ekosistem bisnis air galon dan gas di Perum Dinar Mas secara digital dan terstruktur.
+                </p>
+                <ul class="benefit-list">
+                  <li>
+                    <span class="icon-check-green"><i data-lucide="check"></i></span>
+                    <span><strong>Manajemen Admin</strong>: Atur produk, kelola harga/stok, daftarkan kurir baru, dan verifikasi bukti pembayaran top-up saldo customer.</span>
+                  </li>
+                  <li>
+                    <span class="icon-check-green"><i data-lucide="check"></i></span>
+                    <span><strong>Optimasi Rute Kurir (TSP)</strong>: Urutkan rute pengantaran secara otomatis agar hemat bensin dan waktu menggunakan algoritma Nearest Neighbor.</span>
+                  </li>
+                  <li>
+                    <span class="icon-check-green"><i data-lucide="check"></i></span>
+                    <span><strong>Navigasi Peta (OpenStreetMap)</strong>: Panduan arah pengantaran interaktif langsung di dalam aplikasi untuk meminimalisir salah alamat.</span>
+                  </li>
+                  <li>
+                    <span class="icon-check-green"><i data-lucide="check"></i></span>
+                    <span><strong>Bukti Foto Pengiriman</strong>: Ambil dan unggah foto penyerahan pesanan ke Supabase Storage sebagai bukti sah pengiriman selesai.</span>
+                  </li>
+                </ul>
+                <div class="download-box">
+                  <a href="https://github.com/ImNotDanish05/RandomHTMLWebsite/releases/download/v.0.0.0.1/Mas_Galon_Admin.apk" class="btn btn-green btn-lg" id="download-mitra">
+                    <i data-lucide="download"></i>
+                    <div>
+                      <span class="btn-subtext">Download untuk Android</span>
+                      <span class="btn-maintext">Mas_Galon_Admin.apk</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="tab-visual-preview">
+                <div class="preview-card bg-green-light">
+                  <div class="card-header-mock">
+                    <span class="mock-dot"></span>
+                    <span class="mock-dot"></span>
+                    <span class="mock-dot"></span>
+                  </div>
+                  <div class="card-body-mock">
+                    <div class="order-list-mock">
+                      <div class="order-item-mock active">
+                        <div class="order-status-mock">🛵 OTW</div>
+                        <div class="order-address-mock">Blok B3 No. 12 (Bpk. Joko)</div>
+                        <div class="order-items-mock">2 Galon Air • Rute #1</div>
+                      </div>
+                      <div class="order-item-mock">
+                        <div class="order-status-mock yellow">⏳ Antrean</div>
+                        <div class="order-address-mock">Blok E5 No. 04 (Ibu Ani)</div>
+                        <div class="order-items-mock">1 Gas Melon • Rute #2</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="fitur">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Fitur-Fitur Unggulan Mas Galon</h2>
+          <p class="section-subtitle">Didukung oleh teknologi modern untuk memberikan pengalaman pengiriman terbaik.</p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <div class="feature-card">
+            <div class="feature-icon-box icon-blue">
+              <i data-lucide="award"></i>
+            </div>
+            <h4 class="feature-card-title">Sistem Saldo Abunemen</h4>
+            <p class="feature-card-desc">Bebas repot menyiapkan uang kembalian. Customer dapat melakukan top-up saldo via transfer bank dan diverifikasi langsung oleh Admin.</p>
+          </div>
+          <!-- Feature 2 -->
+          <div class="feature-card">
+            <div class="feature-icon-box icon-green">
+              <i data-lucide="map-pin"></i>
+            </div>
+            <h4 class="feature-card-title">Live Tracking Kurir</h4>
+            <p class="feature-card-desc">Integrasi GPS real-time memetakan koordinat kurir ke Supabase Database, memungkinkan pelanggan memantau posisi pengantaran di peta.</p>
+          </div>
+          <!-- Feature 3 -->
+          <div class="feature-card">
+            <div class="feature-icon-box icon-blue">
+              <i data-lucide="refresh-cw"></i>
+            </div>
+            <h4 class="feature-card-title">Rute Pengantaran Optimal (TSP)</h4>
+            <p class="feature-card-desc">Algoritma khusus (Nearest Neighbor TSP) menyusun urutan alamat pengantaran kurir secara otomatis agar jarak tempuh lebih efisien.</p>
+          </div>
+          <!-- Feature 4 -->
+          <div class="feature-card">
+            <div class="feature-icon-box icon-green">
+              <i data-lucide="message-square"></i>
+            </div>
+            <h4 class="feature-card-title">Chat Real-time In-App</h4>
+            <p class="feature-card-desc">Komunikasi lancar antara kurir dan customer berkat fitur chat bawaan yang terintegrasi dengan upload lampiran foto.</p>
+          </div>
+          <!-- Feature 5 -->
+          <div class="feature-card">
+            <div class="feature-icon-box icon-blue">
+              <i data-lucide="bell"></i>
+            </div>
+            <h4 class="feature-card-title">Notifikasi Instan (FCM)</h4>
+            <p class="feature-card-desc">Menerima push notification instan (Firebase Cloud Messaging) tentang status pesanan baru, top-up sukses, dan konfirmasi barang.</p>
+          </div>
+          <!-- Feature 6 -->
+          <div class="feature-card">
+            <div class="feature-icon-box icon-green">
+              <i data-lucide="shield-check"></i>
+            </div>
+            <h4 class="feature-card-title">Bukti Kirim Digital</h4>
+            <p class="feature-card-desc">Setiap pesanan yang selesai wajib menyertakan bukti foto barang yang diterima, langsung disimpan aman di Supabase Storage.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Installation Guide Section -->
+    <section class="guide-section" id="panduan">
+      <div class="container guide-container">
+        <div class="guide-content">
+          <h2 class="section-title text-left">Cara Instalasi File APK</h2>
+          <p class="guide-subtitle">Karena aplikasi Mas Galon didistribusikan langsung dalam format APK (belum di Google Play Store), ikuti 4 langkah mudah berikut untuk memasangnya di smartphone Android Anda:</p>
+          
+          <div class="steps-list">
+            <div class="step-item">
+              <div class="step-num">1</div>
+              <div class="step-details">
+                <h5>Download File APK</h5>
+                <p>Klik tombol download di atas untuk mengunduh file <code>Mas_Galon.apk</code> atau <code>Mas_Galon_Admin.apk</code> ke memori smartphone Anda.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">2</div>
+              <div class="step-details">
+                <h5>Aktifkan Sumber Tidak Dikenal</h5>
+                <p>Jika muncul peringatan keamanan, buka <strong>Pengaturan</strong> &rarr; <strong>Keamanan</strong> &rarr; Aktifkan opsi <strong>"Instal Aplikasi dari Sumber Tidak Dikenal"</strong> (atau berikan izin pada browser Chrome/File Manager untuk menginstal APK).</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">3</div>
+              <div class="step-details">
+                <h5>Instal APK</h5>
+                <p>Buka folder <strong>Downloads</strong> menggunakan File Manager, ketuk file APK yang baru diunduh, lalu pilih <strong>Instal</strong>.</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">4</div>
+              <div class="step-details">
+                <h5>Aplikasi Siap Digunakan!</h5>
+                <p>Buka aplikasi Mas Galon di handphone Anda, masuk menggunakan akun Anda atau daftarkan diri, dan mulai nikmati layanannya!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="guide-visual">
+          <div class="info-card">
+            <div class="info-card-icon"><i data-lucide="shield-check"></i></div>
+            <h4>Aman untuk Digunakan</h4>
+            <p>File APK yang diunduh dari link rilis resmi GitHub kami terjamin aman dari malware dan bebas dari modifikasi berbahaya. Privasi Anda adalah prioritas utama.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+      <div class="container faq-container">
+        <div class="section-header">
+          <h2 class="section-title">Pertanyaan yang Sering Diajukan</h2>
+          <p class="section-subtitle">Ada pertanyaan seputar layanan Mas Galon? Temukan jawabannya di sini.</p>
+        </div>
+
+        <div class="faq-list">
+          <!-- FAQ 1 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Bagaimana cara melakukan pengisian (top-up) saldo abunemen?</span>
+              <span class="faq-icon"><i data-lucide="menu"></i></span>
+            </button>
+            <div class="faq-answer">
+              <p>Anda dapat mentransfer dana ke nomor rekening bank milik toko yang tertera di menu Top-up aplikasi Customer. Setelah transfer berhasil, unggah foto bukti transfer Anda di aplikasi. Admin toko akan melakukan verifikasi dan saldo Anda akan bertambah seketika secara otomatis disertai dengan notifikasi.</p>
+            </div>
+          </div>
+          <!-- FAQ 2 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Apakah ada biaya pengiriman tambahan?</span>
+              <span class="faq-icon"><i data-lucide="menu"></i></span>
+            </button>
+            <div class="faq-answer">
+              <p>Biaya pengiriman ditentukan oleh Admin berdasarkan dua jenis metode pengiriman: <strong>Normal</strong> (pengantaran terjadwal rutin/keliling dengan tarif lebih murah) dan <strong>Fast Delivery</strong> (pengantaran langsung setelah pemesanan dengan tarif instan).</p>
+            </div>
+          </div>
+          <!-- FAQ 3 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Mengapa akun kurir harus didaftarkan oleh Admin?</span>
+              <span class="faq-icon"><i data-lucide="menu"></i></span>
+            </button>
+            <div class="faq-answer">
+              <p>Demi menjaga keamanan wilayah Perum Dinar Mas dan kredibilitas pengiriman, pendaftaran akun kurir dikontrol secara ketat. Admin toko akan memasukkan data identitas lengkap kurir seperti plat nomor kendaraan, STNK, KTP, dan kapasitas muatan sebelum akun kurir aktif dan dapat digunakan untuk login.</p>
+            </div>
+          </div>
+          <!-- FAQ 4 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Bagaimana cara kerja pelacakan lokasi kurir di peta?</span>
+              <span class="faq-icon"><i data-lucide="menu"></i></span>
+            </button>
+            <div class="faq-answer">
+              <p>Aplikasi Kurir mengirimkan pembaruan koordinat GPS secara real-time ke database Supabase selama status pesanan adalah "Diantar". Aplikasi Customer kemudian memuat koordinat tersebut dan menggambarkannya di peta interaktif berbasis OpenStreetMap sehingga Anda tahu persis posisi kurir saat menuju rumah Anda.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <a href="#" class="footer-logo-area">
+          <img src="./public/images/logo.png" alt="Mas Galon Logo" class="footer-logo">
+          <span class="footer-brand-name">Mas <span class="text-blue">Galon</span></span>
+        </a>
+        <p class="footer-desc">Solusi cerdas abunemen air minum galon dan gas LPG untuk seluruh warga Perum Dinar Mas. Lebih cepat, praktis, dan transparan.</p>
+      </div>
+      <div class="footer-links-group">
+        <h5>Tautan Pintar</h5>
+        <ul class="footer-links">
+          <li><a href="#fitur">Fitur Utama</a></li>
+          <li><a href="#download">Download Aplikasi</a></li>
+          <li><a href="#panduan">Panduan Instalasi</a></li>
+          <li><a href="#faq">Tanya Jawab (FAQ)</a></li>
+        </ul>
+      </div>
+      <div class="footer-info">
+        <h5>Tentang Proyek</h5>
+        <p>Aplikasi ini dikembangkan menggunakan framework Flutter dan backend Supabase Realtime Database. Dibuat khusus untuk optimalisasi pengiriman logistik skala perumahan lokal.</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container footer-bottom-container">
+        <p>&copy; 2026 Mas Galon. Seluruh hak cipta dilindungi undang-undang.</p>
+        <p>Wilayah Operasional: Perum Dinar Mas</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script Modules -->
+  <script type="module" src="./public/js/main.js"></script>
+</body>
+
+</html>
