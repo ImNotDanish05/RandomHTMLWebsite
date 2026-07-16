@@ -33,5 +33,15 @@
     "directory": "./app/ProTimerAlarm",
     "title": "Pro Timer Alarm",
     "description": "Timer Alarm Premium but FREE!"
+  },
+  {
+    "directory": "./app/Jokes",
+    "title": "Random Joke Dashboard",
+    "description": "Dashboard penyedia lelucon acak yang seru dan menghibur!"
+  },
+  {
+    "directory": "./app/MasGalon",
+    "title": "Mas Galon",
+    "description": "Pesan galon air dan gas LPG dengan sistem abunemen prabayar praktis di Perum Dinar Mas."
   }
 ]
