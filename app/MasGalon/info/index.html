@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
+
   <!-- Primary Meta Tags -->
   <title>Informasi Repositori GitHub - Mas Galon</title>
   <meta name="title" content="Informasi Repositori GitHub - Mas Galon">
@@ -16,7 +16,9 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
 
   <!-- Style Embedded to make it self-contained -->
   <style>
@@ -156,12 +158,18 @@
       justify-content: space-between;
       gap: 20px;
       transition: var(--transition);
+      text-decoration: none;
+      color: inherit;
     }
 
     .repo-card:hover {
       transform: translateY(-2px);
       border-color: var(--primary-blue);
       box-shadow: var(--shadow-sm);
+    }
+
+    .repo-card:nth-child(2):hover {
+      border-color: var(--primary-green);
     }
 
     .repo-details {
@@ -231,17 +239,16 @@
       color: var(--text-dark);
       border: 1px solid rgba(45, 55, 72, 0.1);
       transition: var(--transition);
-      text-decoration: none;
     }
 
-    .btn-repo:hover {
+    .repo-card:hover .btn-repo {
       background-color: var(--primary-blue);
       color: var(--white);
       border-color: var(--primary-blue);
       transform: scale(1.05);
     }
 
-    .repo-card:nth-child(2) .btn-repo:hover {
+    .repo-card:nth-child(2):hover .btn-repo {
       background-color: var(--primary-green);
       border-color: var(--primary-green);
     }
@@ -370,14 +377,17 @@
       .content-area {
         padding: 24px;
       }
+
       .page-title {
         font-size: 1.6rem;
       }
+
       .repo-card {
         flex-direction: column;
         align-items: flex-start;
         gap: 16px;
       }
+
       .btn-repo {
         width: 100%;
         border-radius: 8px;
@@ -387,13 +397,87 @@
         font-weight: 600;
         font-size: 0.9rem;
       }
+
       .btn-repo::after {
         content: 'Buka di GitHub';
       }
+
       .notice-box {
         flex-direction: column;
         gap: 12px;
       }
+    }
+
+    /* Entrance Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Apply staggered entrance animations */
+    .header-nav {
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out forwards;
+      animation-delay: 0.1s;
+    }
+
+    .github-title-area {
+      opacity: 0;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: 0.2s;
+    }
+
+    .page-desc {
+      opacity: 0;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: 0.3s;
+    }
+
+    .repo-list .repo-card:nth-child(1) {
+      opacity: 0;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: 0.4s;
+    }
+
+    .repo-list .repo-card:nth-child(2) {
+      opacity: 0;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: 0.5s;
+    }
+
+    .repo-list .repo-card:nth-child(3) {
+      opacity: 0;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: 0.6s;
+    }
+
+    .notice-box {
+      opacity: 0;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: 0.7s;
+    }
+
+    .footer {
+      opacity: 0;
+      animation: fadeIn 1s ease-out forwards;
+      animation-delay: 0.9s;
     }
   </style>
 </head>
@@ -418,28 +502,32 @@
         <i data-lucide="github" class="github-header-icon"></i>
         <h1 class="page-title">Repositori Kode Sumber</h1>
       </div>
-      <p class="page-desc">Ekosistem aplikasi Mas Galon dikembangkan secara modular dalam repositori terpisah berikut:</p>
+      <p class="page-desc">Ekosistem aplikasi Mas Galon dikembangkan secara modular dalam repositori terpisah berikut:
+      </p>
 
       <!-- Repository List -->
       <div class="repo-list">
         <!-- Card 1: Admin & Kurir -->
-        <div class="repo-card">
+        <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_admin/" target="_blank" rel="noopener noreferrer"
+          class="repo-card" aria-label="Buka Repositori Admin & Kurir di GitHub">
           <div class="repo-details-wrapper" style="width: 100%;">
             <div class="repo-details">
               <div class="repo-icon-box">
-                <svg class="gh-logo" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/></svg>
+                <svg class="gh-logo" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" />
+                </svg>
               </div>
               <div class="repo-info-text" style="width: 100%;">
                 <h4>
-                  <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_admin/" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: var(--text-dark);">
-                    ImNotDanish05 / pbl_android_masgalon_admin
-                  </a>
+                  ImNotDanish05 / pbl_android_masgalon_admin
                   <span class="badge-status">Private</span>
                 </h4>
               </div>
             </div>
             <p class="repo-description">
-              Portal Mitra Mas Galon - Aplikasi Flutter (Role-based: Admin & Kurir) yang terintegrasi dengan Supabase Realtime & OpenStreetMap untuk kelola pesanan dan armada.
+              Portal Mitra Mas Galon - Aplikasi Flutter (Role-based: Admin & Kurir) yang terintegrasi dengan Supabase
+              Realtime & OpenStreetMap untuk kelola pesanan dan armada.
             </p>
             <div class="repo-meta">
               <div class="lang-item">
@@ -449,29 +537,32 @@
               <div>MIT License</div>
             </div>
           </div>
-          <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_admin/" target="_blank" rel="noopener noreferrer" class="btn-repo" aria-label="Buka Repositori Admin & Kurir di GitHub">
+          <div class="btn-repo" aria-hidden="true">
             <i data-lucide="github"></i>
-          </a>
-        </div>
+          </div>
+        </a>
 
         <!-- Card 2: Customer -->
-        <div class="repo-card">
+        <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_customer" target="_blank"
+          rel="noopener noreferrer" class="repo-card" aria-label="Buka Repositori Customer di GitHub">
           <div class="repo-details-wrapper" style="width: 100%;">
             <div class="repo-details">
               <div class="repo-icon-box">
-                <svg class="gh-logo" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/></svg>
+                <svg class="gh-logo" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" />
+                </svg>
               </div>
               <div class="repo-info-text" style="width: 100%;">
                 <h4>
-                  <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_customer" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: var(--text-dark);">
-                    ImNotDanish05 / pbl_android_masgalon_customer
-                  </a>
+                  ImNotDanish05 / pbl_android_masgalon_customer
                   <span class="badge-status">Private</span>
                 </h4>
               </div>
             </div>
             <p class="repo-description">
-              Aplikasi Pelanggan Mas Galon - Memesan air galon & gas LPG, top-up saldo abunemen prabayar, chat kurir, & lacak lokasi kurir secara real-time.
+              Aplikasi Pelanggan Mas Galon - Memesan air galon & gas LPG, top-up saldo abunemen prabayar, chat kurir, &
+              lacak lokasi kurir secara real-time.
             </p>
             <div class="repo-meta">
               <div class="lang-item">
@@ -481,29 +572,32 @@
               <div>MIT License</div>
             </div>
           </div>
-          <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_customer" target="_blank" rel="noopener noreferrer" class="btn-repo" aria-label="Buka Repositori Customer di GitHub">
+          <div class="btn-repo" aria-hidden="true">
             <i data-lucide="github"></i>
-          </a>
-        </div>
+          </div>
+        </a>
 
         <!-- Card 3: Supabase -->
-        <div class="repo-card">
+        <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_supabase" target="_blank"
+          rel="noopener noreferrer" class="repo-card" aria-label="Buka Repositori Supabase di GitHub">
           <div class="repo-details-wrapper" style="width: 100%;">
             <div class="repo-details">
               <div class="repo-icon-box">
-                <svg class="gh-logo" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"/></svg>
+                <svg class="gh-logo" viewBox="0 0 98 96" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" />
+                </svg>
               </div>
               <div class="repo-info-text" style="width: 100%;">
                 <h4>
-                  <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_supabase" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: var(--text-dark);">
-                    ImNotDanish05 / pbl_android_masgalon_supabase
-                  </a>
+                  ImNotDanish05 / pbl_android_masgalon_supabase
                   <span class="badge-status">Private</span>
                 </h4>
               </div>
             </div>
             <p class="repo-description">
-              Backend BaaS Mas Galon - Skema basis data PostgreSQL, database webhook functions (Deno), & push notifications FCM HTTP v1.
+              Backend BaaS Mas Galon - Skema basis data PostgreSQL, database webhook functions (Deno), & push
+              notifications FCM HTTP v1.
             </p>
             <div class="repo-meta">
               <div class="lang-item">
@@ -516,10 +610,10 @@
               </div>
             </div>
           </div>
-          <a href="https://github.com/ImNotDanish05/pbl_android_masgalon_supabase" target="_blank" rel="noopener noreferrer" class="btn-repo" aria-label="Buka Repositori Supabase di GitHub">
+          <div class="btn-repo" aria-hidden="true">
             <i data-lucide="github"></i>
-          </a>
-        </div>
+          </div>
+        </a>
       </div>
 
       <!-- Warning & Notice Box -->
@@ -531,10 +625,15 @@
           <h4 class="notice-title">Status Akses Repositori</h4>
           <div class="notice-text">
             <p>
-              Saat ini, seluruh repositori kode sumber di atas berstatus <strong>Private</strong> untuk menjaga kerahasiaan akademik. Akses kolaborator hanya diberikan secara khusus kepada dosen pembimbing dan dosen penguji yang memiliki izin. Repositori ini direncanakan akan dibuka untuk umum (*open-source*) di masa mendatang.
+              Saat ini, seluruh repositori kode sumber di atas berstatus <strong>Private</strong> untuk menjaga
+              kerahasiaan akademik. Akses kolaborator hanya diberikan secara khusus kepada dosen pembimbing dan dosen
+              penguji yang memiliki izin. Repositori ini direncanakan akan dibuka untuk umum (*open-source*) di masa
+              mendatang.
             </p>
             <p>
-              Bagi Anda yang memerlukan akses peninjauan atau ingin bertanya lebih lanjut seputar proyek ini, silakan hubungi tim <strong>CodeNova</strong> secara langsung via Discord: <span class="contact-item">imnotdanish05</span>.
+              Bagi Anda yang memerlukan akses peninjauan atau ingin bertanya lebih lanjut seputar proyek ini, silakan
+              hubungi tim <strong>CodeNova</strong> secara langsung via Discord: <span
+                class="contact-item">imnotdanish05</span>.
             </p>
           </div>
         </div>
@@ -544,7 +643,7 @@
 
   <!-- Footer -->
   <footer class="footer">
-    <p>&copy; 2026 CodeNova. Wilayah Operasional: Perum Dinar Mas</p>
+    <p>&copy; 2026 CodeNova</p>
   </footer>
 
   <!-- Lucide Script CDN -->
