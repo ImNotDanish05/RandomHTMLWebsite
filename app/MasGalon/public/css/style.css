@@ -1284,6 +1284,7 @@ body {
     flex-direction: column;
     justify-content: center;
     padding: 80px 0;
+    overflow: hidden;
   }
   
   .footer {

@@ -1,39 +1,8 @@
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import {
-  createIcons,
-  Menu,
-  X,
-  Download,
-  ShieldCheck,
-  MapPin,
-  Award,
-  ShoppingCart,
-  Check,
-  RefreshCw,
-  MessageSquare,
-  Bell
-} from 'lucide';
-
 // Register GSAP ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
 // Initialize Lucide Icons
-createIcons({
-  icons: {
-    Menu,
-    X,
-    Download,
-    ShieldCheck,
-    MapPin,
-    Award,
-    ShoppingCart,
-    Check,
-    RefreshCw,
-    MessageSquare,
-    Bell
-  }
-});
+lucide.createIcons();
 
 document.addEventListener('DOMContentLoaded', () => {
   // Check user preference for reduced motion
@@ -80,132 +49,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- SCROLLTRIGGER REVEAL ANIMATIONS ---
 
-    // Download Section Reveal
-    gsap.from('#download .section-header', {
+    // Download Section Reveal (Page 2: Slide up from bottom)
+    gsap.from('#download .container', {
       scrollTrigger: {
         trigger: '#download',
         start: 'top 80%',
         toggleActions: 'play none none none'
       },
-      y: 40,
+      y: 150,
       opacity: 0,
-      duration: 0.8,
-      ease: 'power2.out'
+      duration: 1.2,
+      ease: 'power3.out'
     });
 
-    gsap.from('#download .tab-switcher', {
-      scrollTrigger: {
-        trigger: '#download .tab-switcher',
-        start: 'top 85%',
-        toggleActions: 'play none none none'
-      },
-      y: 20,
-      opacity: 0,
-      duration: 0.6,
-      ease: 'power2.out'
-    });
-
-    gsap.from('#download .tab-grid', {
-      scrollTrigger: {
-        trigger: '#download .tab-container',
-        start: 'top 85%',
-        toggleActions: 'play none none none'
-      },
-      y: 40,
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power2.out'
-    });
-
-    // Features Section Reveal
-    gsap.from('#fitur .section-header', {
+    // Features Section Reveal (Page 3: Slide right from left)
+    gsap.from('#fitur .container', {
       scrollTrigger: {
         trigger: '#fitur',
         start: 'top 80%',
         toggleActions: 'play none none none'
       },
-      y: 40,
+      x: -150,
       opacity: 0,
-      duration: 0.8,
-      ease: 'power2.out'
-    });
-
-    gsap.from('#fitur .feature-card', {
-      scrollTrigger: {
-        trigger: '#fitur .features-grid',
-        start: 'top 85%',
-        toggleActions: 'play none none none'
-      },
-      y: 50,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.1,
+      duration: 1.2,
       ease: 'power3.out'
     });
 
-    // Guide Section Reveal
-    gsap.from('#panduan .section-title, #panduan .guide-subtitle', {
+    // Guide Section Reveal (Page 4: Slide left from right)
+    gsap.from('#panduan .container', {
       scrollTrigger: {
         trigger: '#panduan',
         start: 'top 80%',
         toggleActions: 'play none none none'
       },
-      y: 40,
+      x: 150,
       opacity: 0,
-      duration: 0.8,
-      stagger: 0.15,
-      ease: 'power2.out'
+      duration: 1.2,
+      ease: 'power3.out'
     });
 
-    gsap.from('#panduan .step-item', {
-      scrollTrigger: {
-        trigger: '#panduan .steps-list',
-        start: 'top 85%',
-        toggleActions: 'play none none none'
-      },
-      x: -40,
-      opacity: 0,
-      duration: 0.6,
-      stagger: 0.15,
-      ease: 'power2.out'
-    });
-
-    gsap.from('#panduan .info-card', {
-      scrollTrigger: {
-        trigger: '#panduan .guide-visual',
-        start: 'top 80%',
-        toggleActions: 'play none none none'
-      },
-      scale: 0.9,
-      opacity: 0,
-      duration: 0.8,
-      ease: 'back.out(1.5)'
-    });
-
-    // FAQ Section Reveal
-    gsap.from('#faq .section-header', {
+    // FAQ Section Reveal (Page 5: Slide up from bottom)
+    gsap.from('#faq .container', {
       scrollTrigger: {
         trigger: '#faq',
         start: 'top 80%',
         toggleActions: 'play none none none'
       },
-      y: 40,
+      y: 150,
       opacity: 0,
-      duration: 0.8,
-      ease: 'power2.out'
-    });
-
-    gsap.from('#faq .faq-item', {
-      scrollTrigger: {
-        trigger: '#faq .faq-list',
-        start: 'top 85%',
-        toggleActions: 'play none none none'
-      },
-      y: 30,
-      opacity: 0,
-      duration: 0.6,
-      stagger: 0.1,
-      ease: 'power2.out'
+      duration: 1.2,
+      ease: 'power3.out'
     });
   }
 
@@ -254,35 +147,82 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabContents = document.querySelectorAll('.tab-content');
   const phoneImg = document.querySelector('.phone-screen-img');
 
+  function setActiveTab(selectedTab) {
+    const activeBtn = document.querySelector(`.tab-btn[data-tab="${selectedTab}"]`);
+    if (!activeBtn) return;
+
+    // Update active state of buttons
+    tabBtns.forEach(b => b.classList.remove('active'));
+    activeBtn.classList.add('active');
+
+    // Toggle tab contents
+    tabContents.forEach(content => {
+      if (content.id === `tab-${selectedTab}`) {
+        content.classList.add('active');
+        if (!prefersReducedMotion) {
+          gsap.fromTo(content, 
+            { opacity: 0, y: 20 }, 
+            { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+          );
+        }
+      } else {
+        content.classList.remove('active');
+      }
+    });
+
+    // Subtle phone mockup interaction: skew and scale effect on tab change
+    if (!prefersReducedMotion) {
+      gsap.fromTo(phoneImg, 
+        { scale: 0.95, opacity: 0.8 }, 
+        { scale: 1, opacity: 1, duration: 0.6, ease: 'power2.out' }
+      );
+    }
+  }
+
   tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const selectedTab = btn.getAttribute('data-tab');
+      setActiveTab(selectedTab);
+    });
+  });
 
-      // Update active state of buttons
-      tabBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  // 4b. Smooth Scroll and Snapping Fix for Links
+  const links = document.querySelectorAll('a[href^="#"]');
+  links.forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.getAttribute('href');
+      if (targetId === '#') return;
 
-      // Toggle tab contents
-      tabContents.forEach(content => {
-        if (content.id === `tab-${selectedTab}`) {
-          content.classList.add('active');
-          if (!prefersReducedMotion) {
-            gsap.fromTo(content, 
-              { opacity: 0, y: 20 }, 
-              { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
-            );
-          }
-        } else {
-          content.classList.remove('active');
-        }
-      });
+      e.preventDefault();
 
-      // Subtle phone mockup interaction: skew and scale effect on tab change
-      if (!prefersReducedMotion) {
-        gsap.fromTo(phoneImg, 
-          { scale: 0.95, opacity: 0.8 }, 
-          { scale: 1, opacity: 1, duration: 0.6, ease: 'power2.out' }
-        );
+      let targetElement = document.querySelector(targetId);
+
+      // Handle Hero buttons specifically
+      if (targetId === '#download-customer') {
+        setActiveTab('customer');
+        targetElement = document.getElementById('download');
+      } else if (targetId === '#download-mitra') {
+        setActiveTab('mitra');
+        targetElement = document.getElementById('download');
+      }
+
+      if (targetElement) {
+        // Temporarily disable scroll snapping on desktop to prevent overshooting
+        document.documentElement.style.scrollSnapType = 'none';
+
+        // Calculate offset position (80px is navbar height)
+        const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition - 80;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+
+        // Re-enable scroll snapping after smooth scroll completes (800ms)
+        setTimeout(() => {
+          document.documentElement.style.scrollSnapType = '';
+        }, 800);
       }
     });
   });
