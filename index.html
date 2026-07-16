@@ -3,53 +3,525 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koleksi Aplikasi Saya</title>
+    <title>WebOS - Koleksi Aplikasi Saya</title>
     <link rel="icon" href="./public/images/icon.png" type="image/png">
     <link rel="stylesheet" href="./public/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <h1>Koleksi Aplikasi Saya</h1>
-        <p>Jelajahi aplikasi favorit saya.</p>
-    </header>
-    <main id="app-container">
-        </main>
+    <!-- Animated Nebula/Aurora Background -->
+    <div class="bg-nebula">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+    </div>
 
+    <!-- Top Taskbar / Menu Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <button class="start-btn" id="start-btn" onclick="toggleStartMenu(event)">
+                <i class="fa-solid fa-shapes"></i>
+                <span>WebOS</span>
+            </button>
+        </div>
+        <div class="top-bar-center">
+            <div class="status-msg">Welcome to WebOS Dashboard</div>
+        </div>
+        <div class="top-bar-right">
+            <div class="tray-time" id="tray-time">12:00 PM</div>
+            <div class="tray-date" id="tray-date">16 Jul 2026</div>
+        </div>
+    </div>
+
+    <!-- Main Desktop Workspace -->
+    <div class="desktop" id="desktop">
+        <!-- Desktop Grid of Icons -->
+        <div class="desktop-grid" id="desktop-grid"></div>
+
+        <!-- Layer for Windows -->
+        <div class="windows-container" id="windows-container"></div>
+    </div>
+
+    <!-- Bottom Dock -->
+    <div class="dock-container">
+        <div class="dock" id="dock">
+            <!-- Pinned & Active App shortcuts will be appended here dynamically -->
+        </div>
+    </div>
+
+    <!-- Start Menu Modal -->
+    <div class="start-menu" id="start-menu">
+        <div class="start-menu-header">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                </div>
+                <div class="user-info">
+                    <h4>Developer</h4>
+                    <p>WebOS Administrator</p>
+                </div>
+            </div>
+        </div>
+        <div class="start-menu-body">
+            <h3>System Status</h3>
+            <div class="system-stats">
+                <div class="stat-card">
+                    <i class="fa-solid fa-cubes"></i>
+                    <span>Apps Loaded</span>
+                    <strong id="stat-apps-count">0</strong>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>System Status</span>
+                    <strong style="color: #10b981;">Active</strong>
+                </div>
+            </div>
+            <hr>
+            <h3>About WebOS</h3>
+            <p>WebOS compiles standalone projects into an integrated, interactive workspace. Double-click icons on the desktop to launch applications in draggable/resizable windows or open them in a browser tab.</p>
+        </div>
+        <div class="start-menu-footer">
+            <button class="action-btn" onclick="toggleStartMenu(event)"><i class="fa-solid fa-xmark"></i> Close</button>
+        </div>
+    </div>
+
+    <!-- System JavaScript -->
     <script>
-        async function loadApps() {
+        // System Tray Date & Time
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            const timeStr = `${hours}:${minutes} ${ampm}`;
+
+            const day = now.getDate();
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            const dateStr = `${day} ${month} ${year}`;
+
+            document.getElementById('tray-time').textContent = timeStr;
+            document.getElementById('tray-date').textContent = dateStr;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Start Menu Toggle
+        function toggleStartMenu(e) {
+            if (e) e.stopPropagation();
+            const startMenu = document.getElementById('start-menu');
+            startMenu.classList.toggle('open');
+        }
+
+        // Close Start Menu if clicking outside
+        document.addEventListener('click', (e) => {
+            const startMenu = document.getElementById('start-menu');
+            const startBtn = document.getElementById('start-btn');
+            if (startMenu.classList.contains('open') && !startMenu.contains(e.target) && !startBtn.contains(e.target)) {
+                startMenu.classList.remove('open');
+            }
+        });
+
+        // App Manager & Window Logic
+        let appsData = [];
+
+        async function loadSystemApps() {
             try {
-                const res = await fetch('./public/data/app.json');
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
+                if (window.location.protocol === 'file:') {
+                    throw new Error('Local file protocol detected. Using fallback data to bypass CORS.');
                 }
-                const apps = await res.json();
-                const appContainer = document.getElementById('app-container');
+                const res = await fetch('./public/data/app.json');
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                appsData = await res.json();
+            } catch (error) {
+                console.warn("Using fallback local data due to: ", error);
+                appsData = [
+                  {
+                    "directory": "./app/MatchTheSentence",
+                    "title": "Matching Game",
+                    "description": "A fun matching game to connect words and definitions!"
+                  },
+                  {
+                    "directory": "./app/DemoBerita",
+                    "title": "Demo Berita",
+                    "description": "Berita demo untuk tugas Crazy Eight di Desain UIUX"
+                  },
+                  {
+                    "directory": "./app/CanvaCrash",
+                    "title": "Canva Crash",
+                    "description": "Tampilan Canva Crash seperti apa"
+                  },
+                  {
+                    "directory": "./app/AnimeScroll",
+                    "title": "Anime Scroll",
+                    "description": "Deep Scrolling Anime until u tired xD"
+                  },
+                  {
+                    "directory": "./app/AEGIS",
+                    "title": "AEGIS Mockup",
+                    "description": "Aplikasi yang bisa mendeteksi serangan pada aplikasi UMKM"
+                  },
+                  {
+                    "directory": "./app/JamAnalog",
+                    "title": "Jam Analog Sumatera",
+                    "description": "Jam analog dengan tema Sumatera Barat"
+                  },
+                  {
+                    "directory": "./app/ProTimerAlarm",
+                    "title": "Pro Timer Alarm",
+                    "description": "Timer Alarm Premium but FREE!"
+                  },
+                  {
+                    "directory": "./app/Jokes",
+                    "title": "Random Joke Dashboard",
+                    "description": "Dashboard penyedia lelucon acak yang seru dan menghibur!"
+                  },
+                  {
+                    "directory": "./app/MasGalon",
+                    "title": "Mas Galon",
+                    "description": "Pesan galon air dan gas LPG dengan sistem abunemen prabayar praktis di Perum Dinar Mas."
+                  }
+                ];
+            }
 
-                apps.forEach(app => {
-                    const card = document.createElement('a'); // Ganti div menjadi 'a' untuk tautan
-                    card.className = 'card';
-                    card.href = app.directory; // Mengarahkan ke direktori yang diinginkan
-                    card.target = '_blank'; // Membuka di tab baru (opsional)
+            document.getElementById('stat-apps-count').textContent = appsData.length;
 
-                    const iconPath = `${app.directory}/public/images/icon.png`; // Path ikon
+            const grid = document.getElementById('desktop-grid');
+            const dock = document.getElementById('dock');
+            grid.innerHTML = '';
+            dock.innerHTML = '';
+            try {
+                appsData.forEach(app => {
+                    const winId = `win-${app.title.replace(/[^a-zA-Z0-9]/g, '')}`;
+                    const iconPath = `${app.directory}/public/images/icon.png`;
 
-                    card.innerHTML = `
-                        <img src="${iconPath}" alt="${app.title} ikon">
-                        <div class="card-content">
-                            <h3>${app.title}</h3>
-                            <p>${app.description}</p>
-                        </div>
+                    // 1. Create Desktop Icon
+                    const desktopIcon = document.createElement('div');
+                    desktopIcon.className = 'desktop-icon';
+                    desktopIcon.title = app.title;
+                    desktopIcon.innerHTML = `
+                        <img src="${iconPath}" alt="${app.title}" onerror="this.src='./public/images/icon.png'">
+                        <span>${app.title}</span>
                     `;
-                    appContainer.appendChild(card);
+                    // Double-click or single-click opens application
+                    desktopIcon.addEventListener('click', () => openWindow(app));
+                    grid.appendChild(desktopIcon);
                 });
             } catch (error) {
-                console.error("Gagal memuat aplikasi:", error);
-                document.getElementById('app-container').innerHTML = '<p>Maaf, ada masalah saat memuat aplikasi.</p>';
+                console.error("Gagal memuat aplikasi WebOS:", error);
+                document.getElementById('desktop-grid').innerHTML = '<p style="padding: 20px; text-align: center; width: 100%;">Gagal memuat aplikasi. Coba segarkan halaman.</p>';
             }
         }
 
-        loadApps();
+        // Window Manager Logic
+        function openWindow(app) {
+            const winId = `win-${app.title.replace(/[^a-zA-Z0-9]/g, '')}`;
+            let winEl = document.getElementById(winId);
+            let dockItem = document.querySelector(`.dock-item[data-app-id="${winId}"]`);
+
+            if (winEl) {
+                if (winEl.classList.contains('minimized')) {
+                    winEl.classList.remove('minimized');
+                }
+                makeActiveWindow(winEl);
+                return;
+            }
+
+            winEl = document.createElement('div');
+            winEl.className = 'window';
+            winEl.id = winId;
+
+            // Cascade new window position slightly
+            const openWindowsCount = document.querySelectorAll('.window:not(.minimized)').length;
+            const cascadeOffset = 30 * (openWindowsCount % 6);
+
+            // Responsive dimensions
+            let defaultWidth = Math.min(850, window.innerWidth - 40);
+            let defaultHeight = Math.min(580, window.innerHeight - 100);
+            let defaultTop = 60 + cascadeOffset;
+            let defaultLeft = 50 + cascadeOffset;
+
+            if (window.innerWidth <= 600) {
+                winEl.classList.add('maximized');
+            } else {
+                winEl.style.width = `${defaultWidth}px`;
+                winEl.style.height = `${defaultHeight}px`;
+                winEl.style.top = `${defaultTop}px`;
+                winEl.style.left = `${defaultLeft}px`;
+            }
+
+            const iconPath = `${app.directory}/public/images/icon.png`;
+
+            winEl.innerHTML = `
+                <div class="window-header" id="${winId}-header">
+                    <div class="window-title">
+                        <img src="${iconPath}" alt="" onerror="this.src='./public/images/icon.png'">
+                        <span>${app.title}</span>
+                    </div>
+                    <div class="window-controls">
+                        <button class="win-btn win-min" title="Minimize" onclick="minimizeWindow('${winId}')"></button>
+                        <button class="win-btn win-max" title="Maximize/Restore" onclick="toggleMaximizeWindow('${winId}')"></button>
+                        <button class="win-btn win-close" title="Close" onclick="closeWindow('${winId}')"></button>
+                        <a href="${app.directory}" target="_blank" class="win-tab" title="Open Link">
+                            <i class="fa-solid fa-up-right-from-square"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="window-body">
+                    <iframe src="${app.directory}" title="${app.title}"></iframe>
+                </div>
+                <div class="win-resize-handle" id="${winId}-resize"></div>
+            `;
+
+            document.getElementById('windows-container').appendChild(winEl);
+
+            // Setup Draggable
+            const headerEl = document.getElementById(`${winId}-header`);
+            makeDraggable(winEl, headerEl);
+
+            // Setup Resizable
+            const resizeEl = document.getElementById(`${winId}-resize`);
+            makeResizable(winEl, resizeEl);
+
+            // Focus and set state
+            makeActiveWindow(winEl);
+
+            // Create Dock Item dynamically if it doesn't exist
+            if (!dockItem) {
+                const dock = document.getElementById('dock');
+                dockItem = document.createElement('div');
+                dockItem.className = 'dock-item running';
+                dockItem.setAttribute('data-app-id', winId);
+                dockItem.setAttribute('data-title', app.title);
+                dockItem.innerHTML = `
+                    <img src="${iconPath}" alt="${app.title}" onerror="this.src='./public/images/icon.png'">
+                `;
+                dockItem.addEventListener('click', () => {
+                    const winElCurrent = document.getElementById(winId);
+                    if (winElCurrent) {
+                        if (winElCurrent.classList.contains('minimized')) {
+                            winElCurrent.classList.remove('minimized');
+                            makeActiveWindow(winElCurrent);
+                        } else if (winElCurrent.classList.contains('active')) {
+                            minimizeWindow(winId);
+                        } else {
+                            makeActiveWindow(winElCurrent);
+                        }
+                    } else {
+                        openWindow(app);
+                    }
+                });
+                dock.appendChild(dockItem);
+            } else {
+                dockItem.classList.add('running');
+            }
+
+            // Handle window clicking/focus
+            winEl.addEventListener('mousedown', () => makeActiveWindow(winEl));
+            winEl.addEventListener('touchstart', () => makeActiveWindow(winEl), { passive: true });
+        }
+
+        function closeWindow(winId) {
+            const winEl = document.getElementById(winId);
+            if (!winEl) return;
+
+            // Trigger close scale down animation
+            winEl.style.transform = 'scale(0.85)';
+            winEl.style.opacity = '0';
+
+            const dockItem = document.querySelector(`.dock-item[data-app-id="${winId}"]`);
+            if (dockItem) {
+                dockItem.style.transform = 'scale(0)';
+                dockItem.style.opacity = '0';
+                setTimeout(() => {
+                    dockItem.remove();
+                }, 250);
+            }
+
+            setTimeout(() => {
+                winEl.remove();
+            }, 250);
+        }
+
+        function minimizeWindow(winId) {
+            const winEl = document.getElementById(winId);
+            if (!winEl) return;
+            winEl.classList.add('minimized');
+        }
+
+        function toggleMaximizeWindow(winId) {
+            const winEl = document.getElementById(winId);
+            if (!winEl) return;
+
+            if (winEl.classList.contains('maximized')) {
+                winEl.classList.remove('maximized');
+                winEl.style.width = winEl.dataset.prevWidth || '850px';
+                winEl.style.height = winEl.dataset.prevHeight || '580px';
+                winEl.style.top = winEl.dataset.prevTop || '100px';
+                winEl.style.left = winEl.dataset.prevLeft || '150px';
+            } else {
+                winEl.dataset.prevWidth = winEl.style.width;
+                winEl.dataset.prevHeight = winEl.style.height;
+                winEl.dataset.prevTop = winEl.style.top;
+                winEl.dataset.prevLeft = winEl.style.left;
+
+                winEl.style.width = '';
+                winEl.style.height = '';
+                winEl.style.top = '';
+                winEl.style.left = '';
+
+                winEl.classList.add('maximized');
+            }
+        }
+
+        function makeActiveWindow(winEl) {
+            document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+            winEl.classList.add('active');
+
+            const allWindows = Array.from(document.querySelectorAll('.window'));
+            allWindows.forEach(w => {
+                if (w === winEl) {
+                    w.style.zIndex = '50';
+                } else {
+                    w.style.zIndex = '10';
+                }
+            });
+        }
+
+        // Draggable window implementation
+        function makeDraggable(winEl, headerEl) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            let iframe = null;
+            headerEl.onmousedown = dragStart;
+            headerEl.ontouchstart = dragStart;
+
+            function dragStart(e) {
+                if (winEl.classList.contains('maximized')) return;
+                if (e.target.closest('.win-btn') || e.target.closest('.win-tab')) return;
+
+                e = e || window.event;
+                
+                makeActiveWindow(winEl);
+
+                iframe = winEl.querySelector('iframe');
+                if (iframe) {
+                    iframe.style.pointerEvents = 'none';
+                }
+
+                pos3 = e.clientX || (e.touches && e.touches[0].clientX);
+                pos4 = e.clientY || (e.touches && e.touches[0].clientY);
+
+                document.onmouseup = dragEnd;
+                document.ontouchend = dragEnd;
+                document.onmousemove = dragMove;
+                document.ontouchmove = dragMove;
+            }
+
+            function dragMove(e) {
+                e = e || window.event;
+
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+                pos1 = pos3 - clientX;
+                pos2 = pos4 - clientY;
+                pos3 = clientX;
+                pos4 = clientY;
+
+                let newTop = winEl.offsetTop - pos2;
+                let newLeft = winEl.offsetLeft - pos1;
+
+                // Bounds constraint (header stays visible)
+                if (newTop < 0) newTop = 0;
+                const maxTop = window.innerHeight - 45;
+                if (newTop > maxTop) newTop = maxTop;
+
+                winEl.style.top = newTop + "px";
+                winEl.style.left = newLeft + "px";
+                winEl.style.transform = 'none'; // Avoid animations overriding drag position
+            }
+
+            function dragEnd() {
+                if (iframe) {
+                    iframe.style.pointerEvents = 'auto';
+                }
+                document.onmouseup = null;
+                document.onmousemove = null;
+                document.ontouchend = null;
+                document.ontouchmove = null;
+            }
+        }
+
+        // Resizable window implementation
+        function makeResizable(winEl, handleEl) {
+            handleEl.onmousedown = resizeStart;
+            handleEl.ontouchstart = resizeStart;
+
+            function resizeStart(e) {
+                if (winEl.classList.contains('maximized')) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                makeActiveWindow(winEl);
+
+                const iframe = winEl.querySelector('iframe');
+                if (iframe) {
+                    iframe.style.pointerEvents = 'none';
+                }
+
+                const startWidth = winEl.offsetWidth;
+                const startHeight = winEl.offsetHeight;
+                const startX = e.clientX || (e.touches && e.touches[0].clientX);
+                const startY = e.clientY || (e.touches && e.touches[0].clientY);
+
+                document.onmousemove = resizeMove;
+                document.ontouchmove = resizeMove;
+                document.onmouseup = resizeEnd;
+                document.ontouchend = resizeEnd;
+
+                function resizeMove(event) {
+                    const clientX = event.clientX || (event.touches && event.touches[0].clientX);
+                    const clientY = event.clientY || (event.touches && event.touches[0].clientY);
+
+                    const deltaX = clientX - startX;
+                    const deltaY = clientY - startY;
+
+                    let newWidth = startWidth + deltaX;
+                    let newHeight = startHeight + deltaY;
+
+                    // Enforce min dimensions
+                    if (newWidth < 300) newWidth = 300;
+                    if (newHeight < 200) newHeight = 200;
+
+                    // Enforce bounds
+                    const maxAllowedWidth = window.innerWidth - winEl.offsetLeft;
+                    const maxAllowedHeight = window.innerHeight - winEl.offsetTop - 50;
+                    if (newWidth > maxAllowedWidth) newWidth = maxAllowedWidth;
+                    if (newHeight > maxAllowedHeight) newHeight = maxAllowedHeight;
+
+                    winEl.style.width = newWidth + 'px';
+                    winEl.style.height = newHeight + 'px';
+                }
+
+                function resizeEnd() {
+                    if (iframe) {
+                        iframe.style.pointerEvents = 'auto';
+                    }
+                    document.onmousemove = null;
+                    document.ontouchmove = null;
+                    document.onmouseup = null;
+                    document.ontouchend = null;
+                }
+            }
+        }
+
+        // Load applications on start
+        window.addEventListener('DOMContentLoaded', loadSystemApps);
     </script>
 </body>
 </html>
