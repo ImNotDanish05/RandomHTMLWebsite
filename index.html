@@ -99,6 +99,10 @@
             <i class="fa-solid fa-circle-info"></i>
             <span>Information</span>
         </div>
+        <div class="context-menu-item" id="context-menu-video" style="display: none;">
+            <i class="fa-solid fa-play"></i>
+            <span>Interesting Video</span>
+        </div>
     </div>
 
     <!-- Custom Alert / Modal for App Info -->
@@ -588,6 +592,11 @@
             const menu = document.getElementById('context-menu');
             activeAppForContext = app;
 
+            // Show app options, hide video option
+            document.getElementById('context-menu-open').style.display = 'flex';
+            document.getElementById('context-menu-info').style.display = 'flex';
+            document.getElementById('context-menu-video').style.display = 'none';
+
             menu.style.display = 'block';
             
             let posX = e.clientX;
@@ -607,6 +616,45 @@
             menu.style.top = posY + 'px';
         }
 
+        function showGlobalContextMenu(e) {
+            const menu = document.getElementById('context-menu');
+            activeAppForContext = null;
+
+            // Hide app options, show video option
+            document.getElementById('context-menu-open').style.display = 'none';
+            document.getElementById('context-menu-info').style.display = 'none';
+            document.getElementById('context-menu-video').style.display = 'flex';
+
+            menu.style.display = 'block';
+            
+            let posX = e.clientX;
+            let posY = e.clientY;
+            
+            const menuWidth = menu.offsetWidth || 160;
+            const menuHeight = menu.offsetHeight || 40;
+            
+            if (posX + menuWidth > window.innerWidth) {
+                posX = window.innerWidth - menuWidth - 10;
+            }
+            if (posY + menuHeight > window.innerHeight) {
+                posY = window.innerHeight - menuHeight - 10;
+            }
+
+            menu.style.left = posX + 'px';
+            menu.style.top = posY + 'px';
+        }
+
+        // Global right-click handler ("klik kanan sembarangan")
+        document.addEventListener('contextmenu', (e) => {
+            // Ignore right-clicks on desktop app icons (handled individually with stopPropagation)
+            if (e.target.closest('.desktop-icon')) {
+                return;
+            }
+            
+            e.preventDefault();
+            showGlobalContextMenu(e);
+        });
+
         // Setup Context Menu Action Listeners
         document.getElementById('context-menu-open').addEventListener('click', () => {
             if (activeAppForContext) {
@@ -618,6 +666,10 @@
             if (activeAppForContext) {
                 showInfoModal(activeAppForContext);
             }
+        });
+
+        document.getElementById('context-menu-video').addEventListener('click', () => {
+            window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
         });
 
         function showInfoModal(app) {
